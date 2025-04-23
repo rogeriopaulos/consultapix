@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=consultapix
+POSTGRES_USER=HVxmnIwYmCOpXSPoZfeWmTjsghTksYvS
+POSTGRES_PASSWORD=yWXuRosVdOOh3uUFSOz83NqKaBrnpP7fT1mA9Cxvry3ON9cPgWKYXRc2YKbTi1u2
