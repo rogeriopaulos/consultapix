@@ -3,7 +3,7 @@ import uuid
 from django.db import models
 from model_utils.models import TimeStampedModel
 
-from consultapix.core.custom_querysets import CustomQuerySet
+from consultapix.core.querysets import AppModelCustomQuerySet
 
 
 class AppModel(TimeStampedModel):
@@ -17,7 +17,7 @@ class AppModel(TimeStampedModel):
         db_index=True,
     )
 
-    objects = CustomQuerySet.as_manager()
+    objects = AppModelCustomQuerySet.as_manager()
 
     class Meta:
         abstract = True
