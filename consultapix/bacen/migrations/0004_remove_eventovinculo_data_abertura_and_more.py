@@ -17,11 +17,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='eventovinculo',
             name='data_abertura_conta',
-            field=models.DateTimeField(blank=True, db_column='data_abertura_conta', null=True, verbose_name='Data Abertura da Conta'),
+            field=models.DateTimeField(
+                blank=True, db_column='data_abertura_conta', null=True, verbose_name='Data Abertura da Conta'),
         ),
         migrations.AddField(
             model_name='eventovinculo',
             name='motivo_evento',
-            field=models.CharField(blank=True, db_column='motivo_evento', max_length=255, verbose_name='Motivo do Evento'),
+            field=models.CharField(blank=True, db_column='motivo_evento',
+                                   max_length=255, verbose_name='Motivo do Evento'),
         ),
     ]
