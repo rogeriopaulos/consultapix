@@ -161,6 +161,12 @@ class EventoVinculo(AppModel):
         db_column="tipo_evento",
         blank=True,
     )
+    motivo_evento = models.CharField(
+        max_length=255,
+        verbose_name="Motivo do Evento",
+        db_column="motivo_evento",
+        blank=True,
+    )
     data_evento = models.DateTimeField(
         verbose_name="Data do Evento",
         db_column="data_evento",
@@ -221,9 +227,9 @@ class EventoVinculo(AppModel):
         db_column="tipo_conta",
         blank=True,
     )
-    data_abertura = models.DateTimeField(
-        verbose_name="Data Abertura",
-        db_column="data_abertura",
+    data_abertura_conta = models.DateTimeField(
+        verbose_name="Data Abertura da Conta",
+        db_column="data_abertura_conta",
         blank=True,
         null=True,
     )
