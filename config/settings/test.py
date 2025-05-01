@@ -36,3 +36,5 @@ TEMPLATES[0]["OPTIONS"]["debug"] = True  # type: ignore[index]
 MEDIA_URL = "http://media.testserver/"
 # Your stuff...
 # ------------------------------------------------------------------------------
+BACEN_API_DICT_CPF_TEST = env("BACEN_API_DICT_CPF_TEST")
+BACEN_API_DICT_CNPJ_TEST = env("BACEN_API_DICT_CNPJ_TEST")

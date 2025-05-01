@@ -326,3 +326,10 @@ SOCIALACCOUNT_FORMS = {"signup": "consultapix.users.forms.UserSocialSignupForm"}
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+# BACEN API DICT
+BACEN_API_DICT_BASEURL = env(
+    "BACEN_API_DICT_BASEURL",
+    default="https://www3.bcb.gov.br/bc_ccs/rest",
+)
+BACEN_API_DICT_USER = env("BACEN_API_DICT_USER")
+BACEN_API_DICT_PASSWORD = env("BACEN_API_DICT_PASSWORD")
