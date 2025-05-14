@@ -1,7 +1,7 @@
 /* These styles are generated from project.scss. */
 
 body {
-  font-family: 'Geist', sans-serif;
+  font-family: "Geist", sans-serif;
   font-optical-sizing: auto;
   font-weight: 500;
   font-style: normal;
@@ -17,4 +17,11 @@ body {
   color: #b94a48;
   background-color: #f2dede;
   border-color: #eed3d7;
+}
+
+.cp-img-cards {
+  width: 50%;
+  height: auto;
+  margin: 0 auto;
+  display: block;
 }

@@ -1,1 +1,30 @@
 {% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+  Home
+{% endblock title %}
+{% block content %}
+  <div class="card-group">
+    <div class="card text-center">
+      <img src="{% static 'images/img_card_pix.webp' %}"
+           class="card-img-top cp-img-cards"
+           alt="..." />
+      <div class="card-body">
+        <h5 class="card-title">PIX</h5>
+        <a href="#" class="card-link">CPF/CNPJ</a>
+        <a href="#" class="card-link">Chave</a>
+      </div>
+    </div>
+    <div class="card text-center">
+      <img src="{% static 'images/img_card_ccs.png' %}"
+           class="card-img-top cp-img-cards"
+           alt="..." />
+      <div class="card-body">
+        <h5 class="card-title">CCS</h5>
+        <a href="#" class="card-link" disabled>Consultar</a>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
