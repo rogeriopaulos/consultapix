@@ -13,7 +13,6 @@
              class="card-img-top cp-img-cards"
              alt="..." />
         <div class="card-body">
-          <h5 class="card-title">PIX</h5>
           <a href="#"
              class="card-link"
              hx-get="{% url 'bacen:cpf_cnpj' %}"
@@ -37,13 +36,80 @@
              class="card-img-top cp-img-cards"
              alt="..." />
         <div class="card-body">
-          <h5 class="card-title">CCS</h5>
           <a href="#" class="card-link" disabled>Consultar</a>
         </div>
       </div>
     </div>
   </div>
-  <!-- Modal -->
+  <div class="row mt-4">
+    <div class="col">
+      <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Termo</th>
+            <th scope="col">Tipo</th>
+            <th scope="col">Motivo</th>
+            <th scope="col">Data</th>
+            <th scope="col">Processada?</th>
+            <th scope="col">Status</th>
+            <th scope="col">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for requisicao in requisicoes %}
+            <tr>
+              <th scope="row">{{ forloop.counter }}</th>
+              <td>{{ requisicao.termo_busca }}</td>
+              <td>{{ requisicao.get_tipo_requisicao_display }}</td>
+              <td>{{ requisicao.motivo }}</td>
+              <td>{{ requisicao.created }}</td>
+              <td class="text-center">
+                {% if requisicao.processada %}
+                  <i class="bi bi-check-circle text-success"></i>
+                {% else %}
+                  <i class="bi bi-x-circle text-danger"></i>
+                {% endif %}
+              </td>
+              <td>
+                {% if not requisicao.processada %}
+                  <span class="badge text-bg-primary">
+                    <i class="bi bi-eye"></i> <a href="#" class="text-decoration-none text-light">Detalhes</a>
+                  </span>
+                {% else %}
+                  <span class="badge text-bg-secondary">
+                    <i class="bi bi-exclamation-triangle"
+                       data-bs-toggle="tooltip"
+                       data-bs-title="Aguardando processamento...">
+                    </i>
+                    Pendente
+                  </span>
+                {% endif %}
+              </td>
+              <td>
+                <a href="#" class="text-decoration-none text-info">
+                  <i class="bi bi-play-circle me-2"
+                     data-bs-toggle="tooltip"
+                     data-bs-title="Processar consulta"></i>
+                </a>
+                <a href="#" class="text-decoration-none text-danger">
+                  <i class="bi bi-trash"
+                     data-bs-toggle="tooltip"
+                     data-bs-title="Remover consulta"></i>
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <div class="mt-4 text-center">
+        <button class="btn btn-outline-primary">
+          <i class="bi bi-play-circle me-2"></i> Processar em lote
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- Modal Consultas -->
   <div id="modals-consulta"
        class="modal modal-blur fade"
        aria-hidden="false"
