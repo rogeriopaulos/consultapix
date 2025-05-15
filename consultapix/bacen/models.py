@@ -59,13 +59,41 @@ class RequisicaoBacen(AppModel):
 
     def get_status(self):
         task_status = {
-            "PENDING": {"text": "Pendente", "icon": "bi bi-exclamation-triangle"},
-            "SUCCESS": {"text": "Analisado", "icon": "bi bi-check"},
-            "FAILURE": {"text": "Falhou", "icon": "bi bi-x"},
-            "RECEIVED": {"text": "Recebido", "icon": "bi bi-info-circle"},
-            "RETRY": {"text": "Nova tentativa", "icon": "bi bi-arrow-clockwise"},
-            "REVOKED": {"text": "Descartado", "icon": "bi bi-trash"},
-            "STARTED": {"text": "Iniciado", "icon": "bi bi-play"},
+            "PENDING": {
+                "text": "Pendente",
+                "icon": "bi bi-exclamation-triangle",
+                "class": "text-bg-warning",
+            },
+            "SUCCESS": {
+                "text": "Analisado",
+                "icon": "bi bi-check",
+                "class": "text-bg-success",
+            },
+            "FAILURE": {
+                "text": "Falhou",
+                "icon": "bi bi-x",
+                "class": "text-bg-danger",
+            },
+            "RECEIVED": {
+                "text": "Recebido",
+                "icon": "bi bi-info-circle",
+                "class": "text-bg-info",
+            },
+            "RETRY": {
+                "text": "Nova tentativa",
+                "icon": "bi bi-arrow-clockwise",
+                "class": "text-bg-secondary",
+            },
+            "REVOKED": {
+                "text": "Descartado",
+                "icon": "bi bi-trash",
+                "class": "text-bg-dark",
+            },
+            "STARTED": {
+                "text": "Iniciado",
+                "icon": "bi bi-play",
+                "class": "text-bg-info",
+            },
         }
         if has_object(TaskResult, task_id=self.task_id):
             task_result = TaskResult.objects.get(task_id=self.task_id)

@@ -66,21 +66,11 @@
               <td>{{ requisicao.motivo }}</td>
               <td>{{ requisicao.created }}</td>
               <td>
-                {% if requisicao.processada %}
-                  <span class="badge text-bg-primary">
-                    <i class="bi bi-eye"></i>
-                    <a href="#" class="text-decoration-none text-light">Detalhes</a>
+                {% with status=requisicao.get_status %}
+                  <span class="badge {{ status.class|default:"text-bg-secondary" }}">
+                    <i class="{{ status.icon }}"></i> {{ status.text }}
                   </span>
-                {% else %}
-                  {% with status=requisicao.get_status %}
-                    <span class="badge text-bg-secondary"
-                          data-bs-toggle="tooltip"
-                          data-bs-title="Aguardando processamento...">
-                      <i class="{{ status.icon }}"></i>
-                      {{ status.text }}
-                    </span>
-                  {% endwith %}
-                {% endif %}
+                {% endwith %}
               </td>
               <td>
                 {% if not requisicao.processada %}
