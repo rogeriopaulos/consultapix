@@ -1,12 +1,23 @@
 from django.urls import path
 
-from consultapix.bacen.views import ChavePixFormView
-from consultapix.bacen.views import CPFCNPJFormView
-from consultapix.bacen.views import RequisicaoBacenCreateView
+from consultapix.bacen import views
 
 app_name = "bacen"
 urlpatterns = [
-    path("cpf_cnpj/", CPFCNPJFormView.as_view(), name="cpf_cnpj"),
-    path("chave/", ChavePixFormView.as_view(), name="chave"),
-    path("requisicao/", RequisicaoBacenCreateView.as_view(), name="requisicao_bacen"),
+    path(
+        "requisicao/",
+        views.RequisicaoBacenCreateView.as_view(),
+        name="requisicao_bacen",
+    ),
 ]
+htmx_urlpatterns = [
+    path("cpf_cnpj/", views.CPFCNPJFormView.as_view(), name="cpf_cnpj"),
+    path("chave/", views.ChavePixFormView.as_view(), name="chave"),
+    path(
+        "processar-requisicao/<int:requisicao_id>/",
+        views.ProcessarRequisicaoView.as_view(),
+        name="processar_requisicao",
+    ),
+]
+
+urlpatterns += htmx_urlpatterns

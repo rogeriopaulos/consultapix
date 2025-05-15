@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django_celery_results.models import TaskResult
 
+from consultapix.bacen.helpers import has_object
 from consultapix.core.models import AppModel
 
 User = get_user_model()
@@ -40,6 +42,12 @@ class RequisicaoBacen(AppModel):
         verbose_name="Requisição processada",
         db_column="processada",
     )
+    task_id = models.CharField(
+        max_length=255,
+        verbose_name="ID da Tarefa",
+        db_column="task_id",
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Requisição Bacen"
@@ -48,6 +56,22 @@ class RequisicaoBacen(AppModel):
 
     def __str__(self):
         return f"Requisição {self.tipo_requisicao} | {self.user} | {self.created}"
+
+    def get_status(self):
+        task_status = {
+            "PENDING": {"text": "Pendente", "icon": "bi bi-exclamation-triangle"},
+            "SUCCESS": {"text": "Analisado", "icon": "bi bi-check"},
+            "FAILURE": {"text": "Falhou", "icon": "bi bi-x"},
+            "RECEIVED": {"text": "Recebido", "icon": "bi bi-info-circle"},
+            "RETRY": {"text": "Nova tentativa", "icon": "bi bi-arrow-clockwise"},
+            "REVOKED": {"text": "Descartado", "icon": "bi bi-trash"},
+            "STARTED": {"text": "Iniciado", "icon": "bi bi-play"},
+        }
+        if has_object(TaskResult, task_id=self.task_id):
+            task_result = TaskResult.objects.get(task_id=self.task_id)
+            return task_status[task_result.status]
+
+        return {"text": "Aguardando", "icon": "bi bi-clock-history"}
 
 
 class ChavePix(AppModel):

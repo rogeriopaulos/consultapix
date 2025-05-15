@@ -1,0 +1,38 @@
+<th scope="row">{{ forloop.counter }}</th>
+<td>{{ requisicao.termo_busca }}</td>
+<td>{{ requisicao.get_tipo_requisicao_display }}</td>
+<td>{{ requisicao.motivo }}</td>
+<td>{{ requisicao.created }}</td>
+<td>
+  {% if requisicao.processada %}
+    <span class="badge text-bg-primary">
+      <i class="bi bi-eye"></i> <a href="#" class="text-decoration-none text-light">Detalhes</a>
+    </span>
+  {% else %}
+    <span class="badge text-bg-warning"
+          data-bs-toggle="tooltip"
+          data-bs-title="Aguardando processamento...">
+      <i class="bi bi-exclamation-triangle"></i>
+      Pendente
+    </span>
+  {% endif %}
+</td>
+<td>
+  {% if not requisicao.processada %}
+    <a href="#" class="text-decoration-none text-info">
+      <i class="bi bi-play-circle me-2"
+         data-bs-toggle="tooltip"
+         data-bs-title="Processar consulta"></i>
+    </a>
+  {% endif %}
+  <a href="#" class="text-decoration-none text-danger">
+    <i class="bi bi-trash me-2"
+       data-bs-toggle="tooltip"
+       data-bs-title="Remover consulta"></i>
+  </a>
+  <a href="#" class="text-decoration-none text-secondary">
+    <i class="bi bi-pencil-square"
+       data-bs-toggle="tooltip"
+       data-bs-title="Editar"></i>
+  </a>
+</td>

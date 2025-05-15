@@ -5,13 +5,13 @@ from celery.result import AsyncResult
 
 from consultapix.bacen.models import ChavePix
 from consultapix.bacen.models import RequisicaoBacen
-from consultapix.bacen.tasks import request_pix_by_cpf
+from consultapix.bacen.tasks import request_pix_by_cpfcnpj
 
 pytestmark = pytest.mark.django_db
 
 
-def test_request_pix_by_cpf(settings, requisicao_bacen_cpf: RequisicaoBacen):
-    task_result = request_pix_by_cpf.delay(requisicao_bacen_cpf.termo_busca)
+def test_request_pix_by_cpfcnpj(settings, requisicao_bacen_cpf: RequisicaoBacen):
+    task_result = request_pix_by_cpfcnpj.delay(requisicao_bacen_cpf.termo_busca)
     assert isinstance(task_result, AsyncResult)
 
     # Polling para aguardar o resultado da task

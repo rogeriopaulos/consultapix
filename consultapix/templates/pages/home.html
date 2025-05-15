@@ -58,36 +58,39 @@
         </thead>
         <tbody>
           {% for requisicao in requisicoes %}
-            <tr>
+            <tr id="requisicao-{{ requisicao.id }}">
+              {% comment %} <th scope="row">{{ requisicao.id }}</th> {% endcomment %}
               <th scope="row">{{ forloop.counter }}</th>
               <td>{{ requisicao.termo_busca }}</td>
               <td>{{ requisicao.get_tipo_requisicao_display }}</td>
               <td>{{ requisicao.motivo }}</td>
               <td>{{ requisicao.created }}</td>
-              {% comment %} <td class="text-center">
-                {% if requisicao.processada %}
-                  <i class="bi bi-check-circle text-success"></i>
-                {% else %}
-                  <i class="bi bi-x-circle text-danger"></i>
-                {% endif %}
-              </td> {% endcomment %}
               <td>
                 {% if requisicao.processada %}
                   <span class="badge text-bg-primary">
-                    <i class="bi bi-eye"></i> <a href="#" class="text-decoration-none text-light">Detalhes</a>
+                    <i class="bi bi-eye"></i>
+                    <a href="#" class="text-decoration-none text-light">Detalhes</a>
                   </span>
                 {% else %}
-                  <span class="badge text-bg-warning"
-                        data-bs-toggle="tooltip"
-                        data-bs-title="Aguardando processamento...">
-                    <i class="bi bi-exclamation-triangle"></i>
-                    Pendente
-                  </span>
+                  {% with status=requisicao.get_status %}
+                    <span class="badge text-bg-secondary"
+                          data-bs-toggle="tooltip"
+                          data-bs-title="Aguardando processamento...">
+                      <i class="{{ status.icon }}"></i>
+                      {{ status.text }}
+                    </span>
+                  {% endwith %}
                 {% endif %}
               </td>
               <td>
                 {% if not requisicao.processada %}
-                  <a href="#" class="text-decoration-none text-info">
+                  <a href="#"
+                     class="text-decoration-none text-info"
+                     hx-post="{% url 'bacen:processar_requisicao' requisicao.id %}"
+                     hx-target="#requisicao-{{ requisicao.id }}"
+                     hx-swap="innerHTML"
+                     hx-trigger="click"
+                     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
                     <i class="bi bi-play-circle me-2"
                        data-bs-toggle="tooltip"
                        data-bs-title="Processar consulta"></i>

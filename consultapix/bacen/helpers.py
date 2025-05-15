@@ -2,6 +2,7 @@ import logging
 
 import requests
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 
 logger = logging.getLogger(__name__)
 
@@ -53,3 +54,12 @@ def camelcase_to_snake_case(data: dict) -> dict:
         )
 
     return {camel_to_snake(k): v for k, v in data.items()}
+
+
+def has_object(classmodel, **kwargs) -> bool:
+    try:
+        classmodel.objects.get(**kwargs)
+    except ObjectDoesNotExist:
+        return False
+    else:
+        return True
