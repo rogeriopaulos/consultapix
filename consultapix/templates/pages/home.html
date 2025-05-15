@@ -51,7 +51,7 @@
             <th scope="col">Tipo</th>
             <th scope="col">Motivo</th>
             <th scope="col">Data</th>
-            <th scope="col">Processada?</th>
+            {% comment %} <th scope="col">Processada?</th> {% endcomment %}
             <th scope="col">Status</th>
             <th scope="col">Ações</th>
           </tr>
@@ -64,38 +64,44 @@
               <td>{{ requisicao.get_tipo_requisicao_display }}</td>
               <td>{{ requisicao.motivo }}</td>
               <td>{{ requisicao.created }}</td>
-              <td class="text-center">
+              {% comment %} <td class="text-center">
                 {% if requisicao.processada %}
                   <i class="bi bi-check-circle text-success"></i>
                 {% else %}
                   <i class="bi bi-x-circle text-danger"></i>
                 {% endif %}
-              </td>
+              </td> {% endcomment %}
               <td>
-                {% if not requisicao.processada %}
+                {% if requisicao.processada %}
                   <span class="badge text-bg-primary">
                     <i class="bi bi-eye"></i> <a href="#" class="text-decoration-none text-light">Detalhes</a>
                   </span>
                 {% else %}
-                  <span class="badge text-bg-secondary">
-                    <i class="bi bi-exclamation-triangle"
-                       data-bs-toggle="tooltip"
-                       data-bs-title="Aguardando processamento...">
-                    </i>
+                  <span class="badge text-bg-warning"
+                        data-bs-toggle="tooltip"
+                        data-bs-title="Aguardando processamento...">
+                    <i class="bi bi-exclamation-triangle"></i>
                     Pendente
                   </span>
                 {% endif %}
               </td>
               <td>
-                <a href="#" class="text-decoration-none text-info">
-                  <i class="bi bi-play-circle me-2"
-                     data-bs-toggle="tooltip"
-                     data-bs-title="Processar consulta"></i>
-                </a>
+                {% if not requisicao.processada %}
+                  <a href="#" class="text-decoration-none text-info">
+                    <i class="bi bi-play-circle me-2"
+                       data-bs-toggle="tooltip"
+                       data-bs-title="Processar consulta"></i>
+                  </a>
+                {% endif %}
                 <a href="#" class="text-decoration-none text-danger">
-                  <i class="bi bi-trash"
+                  <i class="bi bi-trash me-2"
                      data-bs-toggle="tooltip"
                      data-bs-title="Remover consulta"></i>
+                </a>
+                <a href="#" class="text-decoration-none text-secondary">
+                  <i class="bi bi-pencil-square"
+                     data-bs-toggle="tooltip"
+                     data-bs-title="Editar"></i>
                 </a>
               </td>
             </tr>
@@ -103,7 +109,7 @@
         </tbody>
       </table>
       <div class="mt-4 text-center">
-        <button class="btn btn-outline-primary">
+        <button class="btn btn-info">
           <i class="bi bi-play-circle me-2"></i> Processar em lote
         </button>
       </div>
