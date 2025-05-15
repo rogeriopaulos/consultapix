@@ -14,7 +14,7 @@ urlpatterns = [
     path("usuarios/", include("consultapix.users.urls", namespace="users")),
     path("contas/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    # ...
+    path("bacen/", include("consultapix.bacen.urls", namespace="bacen")),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]

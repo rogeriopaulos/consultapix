@@ -8,15 +8,15 @@ from consultapix.bacen.models import RequisicaoBacen
 @admin.register(RequisicaoBacen)
 class RequisicaoBacenAdmin(admin.ModelAdmin):
     list_display = (
-        "__str__",
-        "user",
-        "tipo_requisicao",
         "termo_busca",
+        "tipo_requisicao",
+        "motivo",
+        "user",
+        "processada",
         "created",
-        "modified",
     )
-    search_fields = ("user__username", "tipo_requisicao", "termo_busca")
-    list_filter = ("tipo_requisicao",)
+    search_fields = ("user__username", "tipo_requisicao", "termo_busca", "motivo")
+    list_filter = ("tipo_requisicao", "processada")
     ordering = ("-created",)
     date_hierarchy = "created"
 

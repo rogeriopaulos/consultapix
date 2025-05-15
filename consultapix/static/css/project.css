@@ -25,3 +25,11 @@ body {
   margin: 0 auto;
   display: block;
 }
+
+select[type="hidden" i] {
+  display: none !important;
+}
+
+#modals-consulta {
+  display: none;
+}

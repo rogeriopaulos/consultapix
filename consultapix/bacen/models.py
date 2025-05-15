@@ -29,6 +29,17 @@ class RequisicaoBacen(AppModel):
         db_column="termo_busca",
         blank=True,
     )
+    motivo = models.CharField(
+        max_length=255,
+        verbose_name="Motivo",
+        db_column="motivo",
+        blank=True,
+    )
+    processada = models.BooleanField(
+        default=False,
+        verbose_name="Requisição processada",
+        db_column="processada",
+    )
 
     class Meta:
         verbose_name = "Requisição Bacen"

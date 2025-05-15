@@ -6,25 +6,50 @@
   Home
 {% endblock title %}
 {% block content %}
-  <div class="card-group">
-    <div class="card text-center">
-      <img src="{% static 'images/img_card_pix.webp' %}"
-           class="card-img-top cp-img-cards"
-           alt="..." />
-      <div class="card-body">
-        <h5 class="card-title">PIX</h5>
-        <a href="#" class="card-link">CPF/CNPJ</a>
-        <a href="#" class="card-link">Chave</a>
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    <div class="col">
+      <div class="card text-center">
+        <img src="{% static 'images/img_card_pix.webp' %}"
+             class="card-img-top cp-img-cards"
+             alt="..." />
+        <div class="card-body">
+          <h5 class="card-title">PIX</h5>
+          <a href="#"
+             class="card-link"
+             hx-get="{% url 'bacen:cpf_cnpj' %}"
+             hx-target="#modals-consulta"
+             hx-trigger="click"
+             data-bs-toggle="modal"
+             data-bs-target="#modals-consulta">CPF/CNPJ</a>
+          <a href="#"
+             class="card-link"
+             hx-get="{% url 'bacen:chave' %}"
+             hx-target="#modals-consulta"
+             hx-trigger="click"
+             data-bs-toggle="modal"
+             data-bs-target="#modals-consulta">Chave</a>
+        </div>
       </div>
     </div>
-    <div class="card text-center">
-      <img src="{% static 'images/img_card_ccs.png' %}"
-           class="card-img-top cp-img-cards"
-           alt="..." />
-      <div class="card-body">
-        <h5 class="card-title">CCS</h5>
-        <a href="#" class="card-link" disabled>Consultar</a>
+    <div class="col">
+      <div class="card text-center">
+        <img src="{% static 'images/img_card_ccs.png' %}"
+             class="card-img-top cp-img-cards"
+             alt="..." />
+        <div class="card-body">
+          <h5 class="card-title">CCS</h5>
+          <a href="#" class="card-link" disabled>Consultar</a>
+        </div>
       </div>
+    </div>
+  </div>
+  <!-- Modal -->
+  <div id="modals-consulta"
+       class="modal modal-blur fade"
+       aria-hidden="false"
+       tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content"></div>
     </div>
   </div>
 {% endblock content %}
