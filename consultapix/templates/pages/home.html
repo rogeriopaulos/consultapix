@@ -60,8 +60,18 @@
           {% for requisicao in requisicoes %}
             <tr id="requisicao-{{ requisicao.id }}">
               {% comment %} <th scope="row">{{ requisicao.id }}</th> {% endcomment %}
-              <th scope="row">{{ forloop.counter }}</th>
-              <td>{{ requisicao.termo_busca }}</td>
+              <th scope="row">
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" value="" id="checkRow" />
+                </div>
+              </th>
+              <td>
+                {% if requisicao.processada %}
+                  <a href="#" class="text-decoration-none" rel="noopener noreferrer">{{ requisicao.termo_busca }}</a>
+                {% else %}
+                  {{ requisicao.termo_busca }}
+                {% endif %}
+              </td>
               <td>{{ requisicao.get_tipo_requisicao_display }}</td>
               <td>{{ requisicao.motivo }}</td>
               <td>{{ requisicao.created }}</td>
