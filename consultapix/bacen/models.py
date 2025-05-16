@@ -63,43 +63,50 @@ class RequisicaoBacen(AppModel):
                 "text": "Pendente",
                 "icon": "bi bi-exclamation-triangle",
                 "class": "text-bg-warning",
+                "finished": False,
             },
             "SUCCESS": {
                 "text": "Analisado",
                 "icon": "bi bi-check",
                 "class": "text-bg-success",
+                "finished": True,
             },
             "FAILURE": {
                 "text": "Falhou",
                 "icon": "bi bi-x",
                 "class": "text-bg-danger",
+                "finished": True,
             },
             "RECEIVED": {
                 "text": "Recebido",
                 "icon": "bi bi-info-circle",
                 "class": "text-bg-info",
+                "finished": False,
             },
             "RETRY": {
                 "text": "Nova tentativa",
                 "icon": "bi bi-arrow-clockwise",
                 "class": "text-bg-secondary",
+                "finished": False,
             },
             "REVOKED": {
                 "text": "Descartado",
                 "icon": "bi bi-trash",
                 "class": "text-bg-dark",
+                "finished": True,
             },
             "STARTED": {
                 "text": "Iniciado",
                 "icon": "bi bi-play",
                 "class": "text-bg-info",
+                "finished": False,
             },
         }
         if has_object(TaskResult, task_id=self.task_id):
             task_result = TaskResult.objects.get(task_id=self.task_id)
             return task_status[task_result.status]
 
-        return {"text": "Aguardando", "icon": "bi bi-clock-history"}
+        return {"text": "Aguardando", "icon": "bi bi-clock-history", "finished": False}
 
 
 class ChavePix(AppModel):

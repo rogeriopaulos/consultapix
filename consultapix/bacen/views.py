@@ -48,3 +48,24 @@ class ProcessarRequisicaoView(LoginRequiredMixin, View):
             "bacen/partials/requisicao_row.html",
             {"requisicao": requisicao},
         )
+
+
+class RequisicaoBacenStatusView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        requisicao_id = kwargs.get("requisicao_id")
+        requisicao = RequisicaoBacen.objects.get(id=requisicao_id)
+
+        if requisicao.get_status()["finished"]:
+            response = render(
+                request,
+                "bacen/partials/requisicao_row_status.html",
+                {"requisicao": requisicao},
+            )
+            response.status_code = 286
+            return response
+
+        return render(
+            request,
+            "bacen/partials/requisicao_row_status.html",
+            {"requisicao": requisicao},
+        )

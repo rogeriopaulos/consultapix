@@ -1,0 +1,8 @@
+<td {% if not requisicao.get_status.finished %} hx-get="{% url 'bacen:requisicao_status' requisicao.id %}" hx-trigger="every 5s" hx-swap="outerHTML" {% endif %}
+    id="requisicao-{{ requisicao.id }}-status">
+  {% with status=requisicao.get_status %}
+    <span class="badge {{ status.class|default:"text-bg-secondary" }}">
+      <i class="{{ status.icon }}"></i> {{ status.text }}
+    </span>
+  {% endwith %}
+</td>

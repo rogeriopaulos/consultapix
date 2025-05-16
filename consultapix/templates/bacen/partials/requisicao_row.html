@@ -1,21 +1,25 @@
-<th scope="row">{{ forloop.counter }}</th>
-<td>{{ requisicao.termo_busca }}</td>
+<th scope="row">
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" value="" id="checkRow" />
+  </div>
+</th>
+<td>
+  {% if requisicao.processada %}
+    <a href="#" class="text-decoration-none" rel="noopener noreferrer">{{ requisicao.termo_busca }}</a>
+  {% else %}
+    {{ requisicao.termo_busca }}
+  {% endif %}
+</td>
 <td>{{ requisicao.get_tipo_requisicao_display }}</td>
 <td>{{ requisicao.motivo }}</td>
 <td>{{ requisicao.created }}</td>
-<td>
-  {% if requisicao.processada %}
-    <span class="badge text-bg-primary">
-      <i class="bi bi-eye"></i> <a href="#" class="text-decoration-none text-light">Detalhes</a>
+<td {% if not requisicao.get_status.finished %} hx-get="{% url 'bacen:requisicao_status' requisicao.id %}" hx-trigger="every 5s" hx-swap="outerHTML" {% endif %}
+    id="requisicao-{{ requisicao.id }}-status">
+  {% with status=requisicao.get_status %}
+    <span class="badge {{ status.class|default:"text-bg-secondary" }}">
+      <i class="{{ status.icon }}"></i> {{ status.text }}
     </span>
-  {% else %}
-    <span class="badge text-bg-warning"
-          data-bs-toggle="tooltip"
-          data-bs-title="Aguardando processamento...">
-      <i class="bi bi-exclamation-triangle"></i>
-      Pendente
-    </span>
-  {% endif %}
+  {% endwith %}
 </td>
 <td>
   {% if not requisicao.processada %}
