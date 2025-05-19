@@ -46,7 +46,11 @@
       <table class="table">
         <thead>
           <tr>
-            <th scope="col">#</th>
+            <th scope="col">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="checkRow" />
+              </div>
+            </th>
             <th scope="col">Termo</th>
             <th scope="col">Tipo</th>
             <th scope="col">Motivo</th>
@@ -65,7 +69,14 @@
               </th>
               <td>
                 {% if requisicao.processada %}
-                  <a href="#" class="text-decoration-none" rel="noopener noreferrer">{{ requisicao.termo_busca }}</a>
+                  <a href="#"
+                     class="text-decoration-none"
+                     rel="noopener noreferrer"
+                     hx-get="{% url 'bacen:requisicao_bacen_detail' requisicao.id %}"
+                     hx-target="#modals-detalhes"
+                     hx-trigger="click"
+                     data-bs-toggle="modal"
+                     data-bs-target="#modals-detalhes">{{ requisicao.termo_busca }}</a>
                 {% else %}
                   {{ requisicao.termo_busca }}
                 {% endif %}
@@ -123,6 +134,15 @@
        aria-hidden="false"
        tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+      <div class="modal-content"></div>
+    </div>
+  </div>
+  <!-- Modal Detalhes -->
+  <div id="modals-detalhes"
+       class="modal modal-blur fade"
+       aria-hidden="false"
+       tabindex="-1">
+    <div class="modal-dialog modal-fullscreen" role="document">
       <div class="modal-content"></div>
     </div>
   </div>

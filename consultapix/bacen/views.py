@@ -2,6 +2,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
+from django.views.generic import DetailView
 from django.views.generic import View
 
 from consultapix.bacen.forms import RequisicaoBacenForm
@@ -69,3 +70,14 @@ class RequisicaoBacenStatusView(LoginRequiredMixin, View):
             "bacen/partials/requisicao_row_status.html",
             {"requisicao": requisicao},
         )
+
+
+class RequisicaoBacenDetailView(LoginRequiredMixin, DetailView):
+    model = RequisicaoBacen
+    template_name = "bacen/partials/requisicao_bacen_detail.html"
+    context_object_name = "requisicao"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["requisicao"] = self.object
+        return context

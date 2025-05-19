@@ -1,0 +1,43 @@
+<div class="modal-dialog modal-fullscreen">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h5 class="modal-title">{{ requisicao.termo_busca }}</h5>
+    </div>
+    <div class="modal-body">
+      <div class="row">
+        <div class="col-12">
+          <h5>Dados da requisição</h5>
+          <p>
+            <strong>ID:</strong> {{ requisicao.id }}
+          </p>
+          <p>
+            <strong>Data:</strong> {{ requisicao.created }}
+          </p>
+          <p>
+            <strong>Processada:</strong> {{ requisicao.processada }}
+          </p>
+          <p>
+            <strong>Status:</strong> {{ requisicao.get_status }}
+          </p>
+          <p>
+            <strong>Tipo de consulta:</strong> {{ requisicao.tipo_requisicao }}
+          </p>
+        </div>
+      </div>
+      <hr />
+      <div class="row">
+        <div class="col-12">
+          <h5>Chaves Pix</h5>
+          {% if requisicao.chaves_pix %}
+            {% for dado in requisicao.chaves_pix.all %}<p>{{ dado }}</p>{% endfor %}
+          {% else %}
+            <p>Nenhum dado retornado.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+    </div>
+  </div>
+</div>

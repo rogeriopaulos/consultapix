@@ -23,6 +23,11 @@ htmx_urlpatterns = [
         views.RequisicaoBacenStatusView.as_view(),
         name="requisicao_status",
     ),
+    path(
+        "requisicao/<int:pk>/",
+        views.RequisicaoBacenDetailView.as_view(),
+        name="requisicao_bacen_detail",
+    ),
 ]
 
 urlpatterns += htmx_urlpatterns
