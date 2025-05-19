@@ -48,7 +48,7 @@
           <tr>
             <th scope="col">
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="checkRow" />
+                <input class="form-check-input" type="checkbox" value="" id="checkAll" />
               </div>
             </th>
             <th scope="col">Termo</th>
@@ -61,7 +61,7 @@
         </thead>
         <tbody>
           {% for requisicao in requisicoes %}
-            <tr class="smooth" id="requisicao-{{ requisicao.id }}">
+            <tr class="smooth requisicao-rows" id="requisicao-{{ requisicao.id }}">
               <th scope="row">
                 <div class="form-check">
                   <input class="form-check-input" type="checkbox" value="" id="checkRow" />
@@ -100,7 +100,8 @@
                      hx-target="#requisicao-{{ requisicao.id }}"
                      hx-swap="innerHTML"
                      hx-trigger="click"
-                     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+                     hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                     id="process-row">
                     <i class="bi bi-play-circle me-2"
                        data-bs-toggle="tooltip"
                        data-bs-title="Processar consulta"></i>
@@ -122,7 +123,7 @@
         </tbody>
       </table>
       <div class="mt-4 text-center">
-        <button class="btn btn-info">
+        <button class="btn btn-info" id="process-all">
           <i class="bi bi-play-circle me-2"></i> Processar em lote
         </button>
       </div>
