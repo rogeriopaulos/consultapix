@@ -3,6 +3,16 @@ import logging
 import requests
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.pagesizes import landscape
+from reportlab.lib.styles import ParagraphStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import Paragraph
+from reportlab.platypus import SimpleDocTemplate
+from reportlab.platypus import Spacer
+from reportlab.platypus import Table
+from reportlab.platypus import TableStyle
 
 logger = logging.getLogger(__name__)
 
@@ -63,3 +73,183 @@ def has_object(classmodel, **kwargs) -> bool:
         return False
     else:
         return True
+
+
+class PixReportGenerator:
+    def __init__(self, output_filename="relatorio_pix_detalhado.pdf"):
+        self.output_filename = output_filename
+        self.pagesize = landscape(A4)
+        self.width, self.height = self.pagesize
+        self.styles = getSampleStyleSheet()
+        self.setup_styles()
+
+    def setup_styles(self):
+        """Configura os estilos de texto para o documento"""
+        self.styles.add(
+            ParagraphStyle(
+                name="Header",
+                fontName="Helvetica-Bold",
+                fontSize=12,
+                alignment=1,  # Centralizado
+                spaceAfter=2,
+            ),
+        )
+
+        self.styles.add(
+            ParagraphStyle(
+                name="SubHeader",
+                fontName="Helvetica-Bold",
+                fontSize=10,
+                alignment=1,  # Centralizado
+                spaceAfter=2,
+            ),
+        )
+
+        self.styles.add(
+            ParagraphStyle(
+                name="ChaveTitle",
+                fontName="Helvetica-Bold",
+                fontSize=9,
+                alignment=0,  # Esquerda
+                spaceAfter=2,
+            ),
+        )
+
+        self.styles["Normal"].fontName = "Helvetica"
+        self.styles["Normal"].fontSize = 9
+
+    def create_header(self, canvas, doc):
+        """Cria o cabeçalho em cada página"""
+        canvas.saveState()
+
+        # Cabeçalho
+        canvas.setFont("Helvetica-Bold", 12)
+        canvas.drawCentredString(
+            self.width / 2,
+            self.height - 20,
+            "POLÍCIA CIVIL DO PIAUÍ",
+        )
+        canvas.drawCentredString(
+            self.width / 2,
+            self.height - 35,
+            "DIRETORIA DE INTELIGÊNCIA DA POLÍCIA CIVIL",
+        )
+        canvas.drawCentredString(
+            self.width / 2,
+            self.height - 50,
+            "LABORATÓRIO DE TECNOLOGIA CONTRA LAVAGEM DE DINHEIRO",
+        )
+        canvas.drawCentredString(
+            self.width / 2,
+            self.height - 65,
+            "RELAÇÃO DE CHAVES PIX - DETALHADA",
+        )
+
+        # Linha horizontal
+        canvas.setStrokeColor(colors.black)
+        canvas.line(30, self.height - 75, self.width - 30, self.height - 75)
+
+        # Rodapé
+        canvas.setFont("Helvetica", 8)
+        canvas.drawCentredString(self.width / 2, 15, "CONFIDENCIAL")
+        canvas.drawRightString(self.width - 30, 15, f"{doc.page}/XX")
+
+        canvas.restoreState()
+
+    def generate_report(self, person_data, chaves_pix):
+        """Gera o relatório completo"""
+        left_margin = 30
+        right_margin = 30
+        doc = SimpleDocTemplate(
+            self.output_filename,
+            pagesize=self.pagesize,
+            leftMargin=left_margin,
+            rightMargin=right_margin,
+            topMargin=80,
+            bottomMargin=30,
+        )
+
+        story = []
+
+        # Informações da pessoa
+        nome_cpf = f"{person_data['nome']} - CPF: {person_data['cpf']}"
+        story.append(Paragraph(nome_cpf, self.styles["ChaveTitle"]))
+        story.append(Spacer(1, 5))
+
+        # Largura total disponível para a tabela
+        total_width = self.width - left_margin - right_margin
+        # Proporção das colunas (soma deve ser 1.0)
+        col_proportions = [0.10, 0.10, 0.18, 0.13, 0.18, 0.23, 0.08]
+        col_widths = [total_width * p for p in col_proportions]
+
+        # Para cada chave PIX
+        for chave in chaves_pix:
+            # Título da chave
+            chave_title = f"Chave: {chave['valor']} - {chave['status']}"
+            story.append(Paragraph(chave_title, self.styles["ChaveTitle"]))
+            story.append(Spacer(1, 5))
+
+            # Tabela de eventos
+            data = [
+                [
+                    Paragraph("Data", self.styles["Normal"]),
+                    Paragraph("Evento", self.styles["Normal"]),
+                    Paragraph("Motivo", self.styles["Normal"]),
+                    Paragraph("CPF/CNPJ", self.styles["Normal"]),
+                    Paragraph("Nome", self.styles["Normal"]),
+                    Paragraph("Banco", self.styles["Normal"]),
+                    Paragraph("Abertura Conta", self.styles["Normal"]),
+                ],
+            ]
+
+            for evento in chave["eventos"]:
+                row = [
+                    Paragraph(
+                        str(evento.get("data", "NaN/NaN/NaN")),
+                        self.styles["Normal"],
+                    ),
+                    Paragraph(str(evento.get("evento", "")), self.styles["Normal"]),
+                    Paragraph(str(evento.get("motivo", "")), self.styles["Normal"]),
+                    Paragraph(str(evento.get("cpf_cnpj", "")), self.styles["Normal"]),
+                    Paragraph(str(evento.get("nome", "")), self.styles["Normal"]),
+                    Paragraph(str(evento.get("banco", "")), self.styles["Normal"]),
+                    Paragraph(
+                        str(evento.get("abertura_conta", "")),
+                        self.styles["Normal"],
+                    ),
+                ]
+                data.append(row)
+
+            # Criar tabela
+            table = Table(data, colWidths=col_widths)
+
+            # Estilo da tabela
+            table_style = TableStyle(
+                [
+                    ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
+                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.black),
+                    ("ALIGN", (0, 0), (-1, 0), "CENTER"),
+                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                    ("FONTSIZE", (0, 0), (-1, 0), 8),
+                    ("BOTTOMPADDING", (0, 0), (-1, 0), 5),
+                    ("BACKGROUND", (0, 1), (-1, -1), colors.white),
+                    ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
+                    ("FONTSIZE", (0, 1), (-1, -1), 8),
+                    ("ALIGN", (0, 0), (-1, -1), "LEFT"),
+                    ("VALIGN", (0, 0), (-1, -1), "TOP"),
+                    ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
+                    ("WORDWRAP", (0, 0), (-1, -1), "CJK"),  # Garante quebra de linha
+                ],
+            )
+
+            table.setStyle(table_style)
+            story.append(table)
+            story.append(Spacer(1, 10))
+
+        # Construir o documento
+        doc.build(
+            story,
+            onFirstPage=self.create_header,
+            onLaterPages=self.create_header,
+        )
+        return self.output_filename
