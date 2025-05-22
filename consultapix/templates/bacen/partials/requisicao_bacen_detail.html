@@ -2,6 +2,12 @@
   <div class="modal-content">
     <div class="modal-header">
       <h5 class="modal-title">{{ requisicao.termo_busca }}</h5>
+      <a href="{% url 'bacen:requisicao_bacen_relatorio' requisicao.id %}"
+         role="button"
+         class="btn btn-outline-secondary">
+        <i class="bi bi-printer"></i>
+        Relatório
+      </a>
     </div>
     <div class="modal-body">
       <div class="row">

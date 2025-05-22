@@ -108,6 +108,24 @@ class RequisicaoBacen(AppModel):
 
         return {"text": "Aguardando", "icon": "bi bi-clock-history", "finished": False}
 
+    def to_dict(self):
+        requisicao_data = {
+            "termo_busca": self.termo_busca,
+            "tipo_requisicao": self.get_tipo_requisicao_display(),
+            "motivo": self.motivo,
+            "processada": self.processada,
+            "status": self.get_status(),
+            "criado_em": self.created,
+            "responsavel": self.user.name,
+        }
+
+        chaves_pix = self.chaves_pix.all()
+
+        return {
+            "requisicao_data": requisicao_data,
+            "chaves_pix": [chave.to_dict() for chave in chaves_pix],
+        }
+
 
 class ChavePix(AppModel):
     requisicao_bacen = models.ForeignKey(
@@ -217,6 +235,23 @@ class ChavePix(AppModel):
             f"Chave Pix - {self.chave} | {self.requisicao_bacen.user} | {self.created}"
         )
 
+    def to_dict(self):
+        eventos_vinculo = self.eventos_vinculo.all()
+
+        return {
+            "chave": self.chave,
+            "tipo_chave": self.tipo_chave,
+            "status": self.status,
+            "cpf_cnpj": self.cpf_cnpj,
+            "nome_proprietario": self.nome_proprietario,
+            "nome_fantasia": self.nome_fantasia,
+            "participante": self.participante,
+            "agencia": self.agencia,
+            "numero_conta": self.numero_conta,
+            "tipo_conta": self.tipo_conta,
+            "eventos_vinculo": [evento.to_dict() for evento in eventos_vinculo],
+        }
+
 
 class EventoVinculo(AppModel):
     chave_pix = models.ForeignKey(
@@ -311,3 +346,19 @@ class EventoVinculo(AppModel):
 
     def __str__(self):
         return f"Evento Vinculo - {self.chave_pix} | Tipo: {self.tipo_evento}"
+
+    def to_dict(self):
+        return {
+            "tipo_evento": self.tipo_evento,
+            "motivo_evento": self.motivo_evento,
+            "data_evento": self.data_evento,
+            "chave": self.chave,
+            "tipo_chave": self.tipo_chave,
+            "cpf_cnpj": self.cpf_cnpj,
+            "nome_proprietario": self.nome_proprietario,
+            "nome_fantasia": self.nome_fantasia,
+            "participante": self.participante,
+            "agencia": self.agencia,
+            "numero_conta": self.numero_conta,
+            "tipo_conta": self.tipo_conta,
+        }

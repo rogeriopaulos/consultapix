@@ -1,4 +1,5 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import FileResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
@@ -6,6 +7,7 @@ from django.views.generic import DetailView
 from django.views.generic import View
 
 from consultapix.bacen.forms import RequisicaoBacenForm
+from consultapix.bacen.helpers import PixReportGenerator
 from consultapix.bacen.models import RequisicaoBacen
 from consultapix.bacen.tasks import request_pix_by_cpfcnpj
 
@@ -81,3 +83,18 @@ class RequisicaoBacenDetailView(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         context["requisicao"] = self.object
         return context
+
+
+class RequisicaoBacenPDFView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        requisicao_id = kwargs.get("requisicao_id")
+        requisicao = RequisicaoBacen.objects.get(id=requisicao_id)
+
+        report_generator = PixReportGenerator()
+        data = requisicao.to_dict()
+        buffer = report_generator.generate_report(
+            data["person_data"],
+            data["chaves_pix"],
+        )
+
+        return FileResponse(buffer, as_attachment=True, filename="requisicao_bacen.pdf")

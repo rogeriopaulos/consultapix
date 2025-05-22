@@ -9,6 +9,11 @@ urlpatterns = [
         views.RequisicaoBacenCreateView.as_view(),
         name="requisicao_bacen",
     ),
+    path(
+        "requisicao/<int:requisicao_id>/relatorio/",
+        views.RequisicaoBacenPDFView.as_view(),
+        name="requisicao_bacen_relatorio",
+    ),
 ]
 htmx_urlpatterns = [
     path("cpf_cnpj/", views.CPFCNPJFormView.as_view(), name="cpf_cnpj"),

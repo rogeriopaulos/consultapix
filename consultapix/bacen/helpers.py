@@ -1,3 +1,4 @@
+import io
 import logging
 
 import requests
@@ -76,8 +77,8 @@ def has_object(classmodel, **kwargs) -> bool:
 
 
 class PixReportGenerator:
-    def __init__(self, output_filename="relatorio_pix_detalhado.pdf"):
-        self.output_filename = output_filename
+    def __init__(self):
+        self.buffer = io.BytesIO()
         self.pagesize = landscape(A4)
         self.width, self.height = self.pagesize
         self.styles = getSampleStyleSheet()
@@ -156,12 +157,12 @@ class PixReportGenerator:
 
         canvas.restoreState()
 
-    def generate_report(self, person_data, chaves_pix):
+    def generate_report(self, requisicao_data, chaves_pix):
         """Gera o relatório completo"""
         left_margin = 30
         right_margin = 30
         doc = SimpleDocTemplate(
-            self.output_filename,
+            self.buffer,
             pagesize=self.pagesize,
             leftMargin=left_margin,
             rightMargin=right_margin,
@@ -172,8 +173,10 @@ class PixReportGenerator:
         story = []
 
         # Informações da pessoa
-        nome_cpf = f"{person_data['nome']} - CPF: {person_data['cpf']}"
-        story.append(Paragraph(nome_cpf, self.styles["ChaveTitle"]))
+        busca = (
+            f"{requisicao_data['tipo_requisicao']}: {requisicao_data['termo_busca']}"
+        )
+        story.append(Paragraph(busca, self.styles["ChaveTitle"]))
         story.append(Spacer(1, 5))
 
         # Largura total disponível para a tabela
@@ -185,7 +188,7 @@ class PixReportGenerator:
         # Para cada chave PIX
         for chave in chaves_pix:
             # Título da chave
-            chave_title = f"Chave: {chave['valor']} - {chave['status']}"
+            chave_title = f"Chave: {chave['chave']} - {chave['status']}"
             story.append(Paragraph(chave_title, self.styles["ChaveTitle"]))
             story.append(Spacer(1, 5))
 
@@ -205,7 +208,7 @@ class PixReportGenerator:
             for evento in chave["eventos"]:
                 row = [
                     Paragraph(
-                        str(evento.get("data", "NaN/NaN/NaN")),
+                        str(evento.get("data_evento", "NaN/NaN/NaN")),
                         self.styles["Normal"],
                     ),
                     Paragraph(str(evento.get("evento", "")), self.styles["Normal"]),
@@ -238,7 +241,7 @@ class PixReportGenerator:
                     ("ALIGN", (0, 0), (-1, -1), "LEFT"),
                     ("VALIGN", (0, 0), (-1, -1), "TOP"),
                     ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
-                    ("WORDWRAP", (0, 0), (-1, -1), "CJK"),  # Garante quebra de linha
+                    ("WORDWRAP", (0, 0), (-1, -1), "CJK"),
                 ],
             )
 
@@ -252,4 +255,5 @@ class PixReportGenerator:
             onFirstPage=self.create_header,
             onLaterPages=self.create_header,
         )
-        return self.output_filename
+        self.buffer.seek(0)
+        return self.buffer
