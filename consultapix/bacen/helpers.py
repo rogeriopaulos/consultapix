@@ -18,42 +18,6 @@ from reportlab.platypus import TableStyle
 logger = logging.getLogger(__name__)
 
 
-class BacenRequestApi:
-    def __init__(self):
-        self.base_url = settings.BACEN_API_DICT_BASEURL
-        self.username = settings.BACEN_API_DICT_USER
-        self.password = settings.BACEN_API_DICT_PASSWORD
-        self.headers = {
-            "Accept": "application/json",
-        }
-        self.pix_endpoint = "/consultar-vinculos-pix"
-        self.TIMEOUT_REQUEST = 60  # seconds
-
-    def _execute_request(self, payload: dict) -> dict:
-        url = f"{self.base_url}{self.pix_endpoint}"
-        try:
-            response = requests.get(
-                url,
-                headers=self.headers,
-                params=payload,
-                auth=(self.username, self.password),
-                timeout=self.TIMEOUT_REQUEST,
-            )
-            response.raise_for_status()
-        except requests.exceptions.RequestException as e:
-            return {"error": str(e)}
-
-        return response.json()
-
-    def get_pix_by_cpf_cnpj(self, cpf: str, reason: str) -> dict:
-        payload = {"cpfCnpj": cpf, "motivo": reason}
-        return self._execute_request(payload)
-
-    def get_pix_by_key(self, key: str, reason: str) -> dict:
-        payload = {"chave": key, "motivo": reason}
-        return self._execute_request(payload)
-
-
 def camelcase_to_snake_case(data: dict) -> dict:
     """
     Convert camelCase keys in a dictionary to snake_case.
@@ -76,6 +40,64 @@ def has_object(classmodel, **kwargs) -> bool:
         return True
 
 
+class BacenRequestApi:
+    def __init__(self):
+        self.base_url = settings.BACEN_API_DICT_BASEURL
+        self.informes_url = settings.BACEN_API_INFORMES
+
+        self.username = settings.BACEN_API_DICT_USER
+        self.password = settings.BACEN_API_DICT_PASSWORD
+
+        self.headers = {
+            "Accept": "application/json",
+        }
+
+        self.pix_endpoint = "/consultar-vinculos-pix"
+
+        self.TIMEOUT_REQUEST = 60  # seconds
+
+    def _execute_pix_request(self, payload: dict) -> dict:
+        url = f"{self.base_url}{self.pix_endpoint}"
+        try:
+            response = requests.get(
+                url,
+                headers=self.headers,
+                params=payload,
+                auth=(self.username, self.password),
+                timeout=self.TIMEOUT_REQUEST,
+            )
+            response.raise_for_status()
+        except requests.exceptions.RequestException as e:
+            return {"error": str(e)}
+
+        return response.json()
+
+    def get_pix_by_cpf_cnpj(self, cpf: str, reason: str) -> dict:
+        payload = {"cpfCnpj": cpf, "motivo": reason}
+        return self._execute_pix_request(payload)
+
+    def get_pix_by_key(self, key: str, reason: str) -> dict:
+        payload = {"chave": key, "motivo": reason}
+        return self._execute_pix_request(payload)
+
+    def get_bank_info(self, cnpj: str) -> dict:
+        """
+        Obtém informações bancárias de um CNPJ usando a API de Informes do Bacen.
+        """
+        try:
+            response = requests.get(
+                f"{self.informes_url}/pessoasJuridicas",
+                params={"cnpj": cnpj},
+                timeout=self.TIMEOUT_REQUEST,
+            )
+            response.raise_for_status()
+        except requests.exceptions.RequestException:
+            logger.exception("Erro ao obter informações do banco")
+            return {}
+
+        return response.json()
+
+
 class PixReportGenerator:
     def __init__(self):
         self.buffer = io.BytesIO()
@@ -83,6 +105,8 @@ class PixReportGenerator:
         self.width, self.height = self.pagesize
         self.styles = getSampleStyleSheet()
         self.setup_styles()
+        self.bacen_api = BacenRequestApi()
+        self.banks_info = {}
 
     def setup_styles(self):
         """Configura os estilos de texto para o documento"""
@@ -172,7 +196,6 @@ class PixReportGenerator:
 
         story = []
 
-        # Informações da pessoa
         busca = (
             f"{requisicao_data['tipo_requisicao']}: {requisicao_data['termo_busca']}"
         )
@@ -185,7 +208,6 @@ class PixReportGenerator:
         col_proportions = [0.10, 0.10, 0.18, 0.13, 0.18, 0.23, 0.08]
         col_widths = [total_width * p for p in col_proportions]
 
-        # Para cada chave PIX
         for chave in chaves_pix:
             # Título da chave
             chave_title = f"Chave: {chave['chave']} - {chave['status']}"
@@ -205,17 +227,47 @@ class PixReportGenerator:
                 ],
             ]
 
-            for evento in chave["eventos"]:
+            for evento in chave["eventos_vinculo"]:
+                if not evento.get("participante"):
+                    banco = "N/A"
+
+                if evento["participante"] in self.banks_info:
+                    bank_data = self.banks_info[evento.get("participante")]
+                else:
+                    bank_data = self.bacen_api.get_bank_info(evento["participante"])
+                    if bank_data:
+                        self.banks_info[evento["participante"]] = bank_data
+                        banco = self.format_bank_cell(evento, bank_data)
+                    else:
+                        logger.error(
+                            "Banco não encontrado na API do BACEN: %s",
+                            evento["participante"],
+                        )
+                        banco = "N/A"
+
+                if evento.get("data_evento"):
+                    data_evento = evento.get("data_evento").strftime(
+                        "%d/%m/%Y %H:%M:%S",
+                    )
+                else:
+                    data_evento = "N/A"
+
                 row = [
+                    Paragraph(data_evento, self.styles["Normal"]),
                     Paragraph(
-                        str(evento.get("data_evento", "NaN/NaN/NaN")),
+                        str(evento.get("tipo_evento", "")),
                         self.styles["Normal"],
                     ),
-                    Paragraph(str(evento.get("evento", "")), self.styles["Normal"]),
-                    Paragraph(str(evento.get("motivo", "")), self.styles["Normal"]),
+                    Paragraph(
+                        str(evento.get("motivo_evento", "")),
+                        self.styles["Normal"],
+                    ),
                     Paragraph(str(evento.get("cpf_cnpj", "")), self.styles["Normal"]),
-                    Paragraph(str(evento.get("nome", "")), self.styles["Normal"]),
-                    Paragraph(str(evento.get("banco", "")), self.styles["Normal"]),
+                    Paragraph(
+                        str(evento.get("nome_proprietario", "")),
+                        self.styles["Normal"],
+                    ),
+                    Paragraph(banco, self.styles["Normal"]),
                     Paragraph(
                         str(evento.get("abertura_conta", "")),
                         self.styles["Normal"],
@@ -257,3 +309,11 @@ class PixReportGenerator:
         )
         self.buffer.seek(0)
         return self.buffer
+
+    def format_bank_cell(self, event: dict, bank_data: dict) -> str:
+        bank = f"{bank_data.get('codigoCompensacao') or ''} {bank_data.get('nome', 'N/A')}".strip()  # noqa: E501
+        agencia = event.get("agencia", "N/A")
+        conta = event.get("numero_conta", "N/A")
+        tipo_conta = event.get("tipo_conta", "N/A")
+
+        return f"{bank}\nAgência: {agencia}\nConta: {conta}\nTipo: {tipo_conta}"

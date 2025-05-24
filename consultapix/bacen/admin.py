@@ -30,7 +30,7 @@ class ChavePixAdmin(admin.ModelAdmin):
         "tipo_chave",
         "status",
     )
-    search_fields = ("requisicao_bacen__user__username", "chave", "tipo_chave")
+    search_fields = ("requisicao_bacen__user__name", "chave", "tipo_chave")
     list_filter = ("status",)
     ordering = ("-created",)
     date_hierarchy = "created"

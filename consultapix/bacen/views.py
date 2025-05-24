@@ -93,7 +93,7 @@ class RequisicaoBacenPDFView(LoginRequiredMixin, View):
         report_generator = PixReportGenerator()
         data = requisicao.to_dict()
         buffer = report_generator.generate_report(
-            data["person_data"],
+            data["requisicao_data"],
             data["chaves_pix"],
         )
 
