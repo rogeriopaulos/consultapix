@@ -2,8 +2,8 @@
   <div class="modal-content">
     <div class="modal-header">
       <h5 class="modal-title d-flex align-items-center">
-        <span class="badge bg-primary me-2">{{ object.get_tipo_requisicao_display }}</span>
-        {{ object.termo_busca }}
+        <span class="badge bg-primary me-2">{{ requisicao.get_tipo_requisicao_display }}</span>
+        {{ requisicao.termo_busca }}
       </h5>
       <a href="{% url 'bacen:requisicao_bacen_relatorio' requisicao.id %}"
          role="button"
@@ -20,14 +20,14 @@
           </h1>
         </div>
         <div class="col">
-          <div class="row fw-bold">{{ object.get_tipo_requisicao_display }}</div>
+          <div class="row fw-bold">{{ requisicao.get_tipo_requisicao_display }}</div>
           <div class="row">
             <div class="col g-0">
               <i class="bi bi-search me-1"></i>
-              {{ object.termo_busca }}
+              {{ requisicao.termo_busca }}
             </div>
           </div>
-          <div class="row text-muted">{{ object.motivo }}</div>
+          <div class="row text-muted">{{ requisicao.motivo }}</div>
           {% with status=requisicao.get_status %}
             <div class="row badge {{ status.class|default:"text-bg-secondary" }}">
               <div class="col">
@@ -37,18 +37,42 @@
           {% endwith %}
         </div>
         <div class="col d-flex flex-column align-items-end">
-          <span><i class="bi bi-calendar2 me-1"></i> {{ object.created }}</span>
-          <span class="fw-light"><i class="bi bi-person-circle me-1"></i> {{ object.user.name }}</span>
+          <span><i class="bi bi-calendar2 me-1"></i> {{ requisicao.created }}</span>
+          <span class="fw-light"><i class="bi bi-person-circle me-1"></i> {{ requisicao.user.name }}</span>
         </div>
       </div>
       <div class="row">
         <div class="col-12">
-          <h5>Chaves Pix</h5>
-          {% if requisicao.chaves_pix %}
-            {% for dado in requisicao.chaves_pix.all %}<p>{{ dado }}</p>{% endfor %}
-          {% else %}
-            <p>Nenhum dado retornado.</p>
-          {% endif %}
+          <h5 class="bg-secondary text-white text-center p-2 mb-2">Chaves Pix</h5>
+          {% for chave in requisicao.chaves_pix.all %}
+            <ul class="mb-2 list-unstyled">
+              <li class="fw-bold">{{ chave.chave }} ({{ chave.tipo_chave }})</li>
+            </ul>
+            <table class="table table-bordered table-striped table-hover mb-5">
+              <thead>
+                <tr>
+                  <th scope="col">Criado em</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">CPF/CNPJ</th>
+                  <th scope="col">Nome</th>
+                  <th scope="col">Banco</th>
+                  <th scope="col">Abertura Conta</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>{{ chave.data_criacao }}</td>
+                  <td>{{ chave.status }}</td>
+                  <td>{{ chave.cpf_cnpj }}</td>
+                  <td>{{ chave.nome_proprietario }}</td>
+                  <td>{{ chave.numero_conta }}</td>
+                  <td>{{ chave.data_abertura_conta }}</td>
+                </tr>
+              </tbody>
+            </table>
+          {% empty %}
+            <p class="text-center">Nenhuma chave encontrada.</p>
+          {% endfor %}
         </div>
       </div>
     </div>

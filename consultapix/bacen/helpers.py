@@ -252,6 +252,13 @@ class PixReportGenerator:
                 else:
                     data_evento = "N/A"
 
+                if evento.get("data_abertura_conta"):
+                    data_abertura_conta = evento.get("data_abertura_conta").strftime(
+                        "%d/%m/%Y %H:%M:%S",
+                    )
+                else:
+                    data_abertura_conta = "N/A"
+
                 row = [
                     Paragraph(data_evento, self.styles["Normal"]),
                     Paragraph(
@@ -268,10 +275,7 @@ class PixReportGenerator:
                         self.styles["Normal"],
                     ),
                     Paragraph(banco, self.styles["Normal"]),
-                    Paragraph(
-                        str(evento.get("abertura_conta", "")),
-                        self.styles["Normal"],
-                    ),
+                    Paragraph(data_abertura_conta, self.styles["Normal"]),
                 ]
                 data.append(row)
 
