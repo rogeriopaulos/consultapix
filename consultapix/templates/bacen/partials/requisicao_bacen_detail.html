@@ -1,7 +1,10 @@
 <div class="modal-dialog modal-fullscreen">
   <div class="modal-content">
     <div class="modal-header">
-      <h5 class="modal-title">{{ requisicao.termo_busca }}</h5>
+      <h5 class="modal-title d-flex align-items-center">
+        <span class="badge bg-primary me-2">{{ requisicao.get_tipo_requisicao_display }}</span>
+        {{ requisicao.termo_busca }}
+      </h5>
       <a href="{% url 'bacen:requisicao_bacen_relatorio' requisicao.id %}"
          role="button"
          class="btn btn-outline-secondary">
@@ -9,28 +12,35 @@
         Relatório
       </a>
     </div>
-    <div class="modal-body">
-      <div class="row">
-        <div class="col-12">
-          <h5>Dados da requisição</h5>
-          <p>
-            <strong>ID:</strong> {{ requisicao.id }}
-          </p>
-          <p>
-            <strong>Data:</strong> {{ requisicao.created }}
-          </p>
-          <p>
-            <strong>Processada:</strong> {{ requisicao.processada }}
-          </p>
-          <p>
-            <strong>Status:</strong> {{ requisicao.get_status }}
-          </p>
-          <p>
-            <strong>Tipo de consulta:</strong> {{ requisicao.tipo_requisicao }}
-          </p>
+    <div class="modal-body container">
+      <div class="row border border-2 border-secondary border-opacity-25 rounded-3 mb-3 p-2 d-flex align-items-center">
+        <div class="col-1 text-center">
+          <h1>
+            <i class="bi bi-bank2"></i>
+          </h1>
+        </div>
+        <div class="col">
+          <div class="row fw-bold">{{ requisicao.get_tipo_requisicao_display }}</div>
+          <div class="row">
+            <div class="col g-0">
+              <i class="bi bi-search me-1"></i>
+              {{ requisicao.termo_busca }}
+            </div>
+          </div>
+          <div class="row text-muted">{{ requisicao.motivo }}</div>
+          {% with status=requisicao.get_status %}
+            <div class="row badge {{ status.class|default:"text-bg-secondary" }}">
+              <div class="col">
+                <i class="{{ status.icon }}"></i> {{ status.text }}
+              </div>
+            </div>
+          {% endwith %}
+        </div>
+        <div class="col d-flex flex-column align-items-end">
+          <span><i class="bi bi-calendar2 me-1"></i> {{ requisicao.created }}</span>
+          <span class="fw-light"><i class="bi bi-person-circle me-1"></i> {{ requisicao.user.name }}</span>
         </div>
       </div>
-      <hr />
       <div class="row">
         <div class="col-12">
           <h5>Chaves Pix</h5>
