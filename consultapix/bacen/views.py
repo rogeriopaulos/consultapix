@@ -79,10 +79,10 @@ class RequisicaoBacenDetailView(LoginRequiredMixin, DetailView):
     template_name = "bacen/partials/requisicao_bacen_detail.html"
     context_object_name = "requisicao"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["requisicao"] = self.object
-        return context
+    def get_queryset(self):
+        return RequisicaoBacen.objects.prefetch_related("chaves_pix").filter(
+            user=self.request.user,
+        )
 
 
 class RequisicaoBacenPDFView(LoginRequiredMixin, View):
