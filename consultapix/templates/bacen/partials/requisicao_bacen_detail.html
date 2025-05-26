@@ -65,9 +65,50 @@
                   <td>{{ chave.status }}</td>
                   <td>{{ chave.cpf_cnpj }}</td>
                   <td>{{ chave.nome_proprietario }}</td>
-                  <td>{{ chave.numero_conta }}</td>
-                  <td>{{ chave.data_abertura_conta }}</td>
+                  <td class="fw-light">
+                    <span class="fw-bold fst-italic">
+                      {% if chave.banco %}
+                        {{ chave.banco }}
+                      {% else %}
+                        {{ chave.participante }}
+                      {% endif %}
+                    </span>
+                    <br />
+                    <span class="fw-normal me-1">Agência:</span>{{ chave.agencia }}
+                    <br />
+                    <span class="fw-normal me-1">Conta:</span>{{ chave.numero_conta }}
+                    <br />
+                    <span class="fw-normal me-1">Tipo:</span>{{ chave.tipo_conta }}
+                  </td>
+                  <td>{{ chave.data_abertura_conta|date:"d/m/Y" }}</td>
                 </tr>
+                {% with eventos=chave.eventos_vinculo.all %}
+                  {% if eventos %}
+                    <tr>
+                      <td colspan="6">
+                        <i class="bi bi-card-list"></i> Eventos
+                        <table class="table table-sm">
+                          <thead>
+                            <tr>
+                              <th scope="col">Data</th>
+                              <th scope="col">Tipo</th>
+                              <th scope="col">Motivo</th>
+                            </tr>
+                          </thead>
+                          <tbody class="table-group-divider">
+                            {% for evento in eventos %}
+                              <tr>
+                                <td>{{ evento.data_evento }}</td>
+                                <td>{{ evento.tipo_evento }}</td>
+                                <td>{{ evento.motivo_evento }}</td>
+                              </tr>
+                            {% endfor %}
+                          </tbody>
+                        </table>
+                      </td>
+                    </tr>
+                  {% endif %}
+                {% endwith %}
               </tbody>
             </table>
           {% empty %}

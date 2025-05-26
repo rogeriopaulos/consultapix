@@ -228,36 +228,21 @@ class PixReportGenerator:
             ]
 
             for evento in chave["eventos_vinculo"]:
-                if not evento.get("participante"):
-                    banco = "N/A"
+                banco = "Dados bancários não disponíveis"
+                if chave.get("banco"):
+                    banco = self.format_bank_cell(evento, chave.get("banco"))
 
-                if evento["participante"] in self.banks_info:
-                    bank_data = self.banks_info[evento.get("participante")]
-                else:
-                    bank_data = self.bacen_api.get_bank_info(evento["participante"])
-                    if bank_data:
-                        self.banks_info[evento["participante"]] = bank_data
-                        banco = self.format_bank_cell(evento, bank_data)
-                    else:
-                        logger.error(
-                            "Banco não encontrado na API do BACEN: %s",
-                            evento["participante"],
-                        )
-                        banco = "N/A"
-
+                data_evento = "N/A"
                 if evento.get("data_evento"):
                     data_evento = evento.get("data_evento").strftime(
                         "%d/%m/%Y %H:%M:%S",
                     )
-                else:
-                    data_evento = "N/A"
 
+                data_abertura_conta = "N/A"
                 if evento.get("data_abertura_conta"):
                     data_abertura_conta = evento.get("data_abertura_conta").strftime(
-                        "%d/%m/%Y %H:%M:%S",
+                        "%d/%m/%Y",
                     )
-                else:
-                    data_abertura_conta = "N/A"
 
                 row = [
                     Paragraph(data_evento, self.styles["Normal"]),
@@ -314,8 +299,7 @@ class PixReportGenerator:
         self.buffer.seek(0)
         return self.buffer
 
-    def format_bank_cell(self, event: dict, bank_data: dict) -> str:
-        bank = f"{bank_data.get('codigoCompensacao') or ''} {bank_data.get('nome', 'N/A')}".strip()  # noqa: E501
+    def format_bank_cell(self, event: dict, bank: str) -> str:
         agencia = event.get("agencia", "N/A")
         conta = event.get("numero_conta", "N/A")
         tipo_conta = event.get("tipo_conta", "N/A")

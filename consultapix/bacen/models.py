@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django_celery_results.models import TaskResult
 
+from consultapix.bacen.helpers import BacenRequestApi
 from consultapix.bacen.helpers import has_object
 from consultapix.core.models import AppModel
 
@@ -225,6 +226,14 @@ class ChavePix(AppModel):
         null=True,
     )
 
+    banco = models.CharField(
+        max_length=255,
+        verbose_name="Banco",
+        default="Desconhecido",
+        db_column="banco",
+        blank=True,
+    )
+
     class Meta:
         verbose_name = "Chave Pix"
         verbose_name_plural = "Chaves Pix"
@@ -250,7 +259,17 @@ class ChavePix(AppModel):
             "numero_conta": self.numero_conta,
             "tipo_conta": self.tipo_conta,
             "eventos_vinculo": [evento.to_dict() for evento in eventos_vinculo],
+            "data_abertura_conta": self.data_abertura_conta,
+            "banco": self.banco,
         }
+
+    def save(self, *args, **kwargs):
+        if self.participante:
+            api = BacenRequestApi()
+            result = api.get_bank_info(self.participante)
+            if result:
+                self.banco = f"{result.get('codigoCompensacao') or ''} {result.get('nome', 'N/A')}".strip()  # noqa: E501
+        super().save(*args, **kwargs)
 
 
 class EventoVinculo(AppModel):
@@ -361,4 +380,5 @@ class EventoVinculo(AppModel):
             "agencia": self.agencia,
             "numero_conta": self.numero_conta,
             "tipo_conta": self.tipo_conta,
+            "data_abertura_conta": self.data_abertura_conta,
         }
