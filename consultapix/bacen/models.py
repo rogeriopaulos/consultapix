@@ -357,6 +357,13 @@ class EventoVinculo(AppModel):
         blank=True,
         null=True,
     )
+    banco = models.CharField(
+        max_length=255,
+        verbose_name="Banco",
+        default="Desconhecido",
+        db_column="banco",
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Evento Vinculo Pix CPF/CNPJ"
@@ -381,4 +388,13 @@ class EventoVinculo(AppModel):
             "numero_conta": self.numero_conta,
             "tipo_conta": self.tipo_conta,
             "data_abertura_conta": self.data_abertura_conta,
+            "banco": self.banco,
         }
+
+    def save(self, *args, **kwargs):
+        if self.participante:
+            api = BacenRequestApi()
+            result = api.get_bank_info(self.participante)
+            if result:
+                self.banco = f"{result.get('codigoCompensacao') or ''} {result.get('nome', 'N/A')}".strip()  # noqa: E501
+        super().save(*args, **kwargs)

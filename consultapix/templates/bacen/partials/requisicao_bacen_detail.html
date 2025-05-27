@@ -46,7 +46,9 @@
           <h5 class="bg-secondary text-white text-center p-2 mb-2">Chaves Pix</h5>
           {% for chave in requisicao.chaves_pix.all %}
             <ul class="mb-2 list-unstyled">
-              <li class="fw-bold">{{ chave.chave }} ({{ chave.tipo_chave }})</li>
+              <li class="fw-bold">
+                <i class="bi bi-key-fill text-secondary me-2"></i> {{ chave.chave }} ({{ chave.tipo_chave }})
+              </li>
             </ul>
             <table class="table table-bordered table-striped table-hover mb-5">
               <thead>
@@ -86,13 +88,17 @@
                   {% if eventos %}
                     <tr>
                       <td colspan="6">
-                        <i class="bi bi-card-list"></i> Eventos
+                        <span class="text-muted mt-3"><i class="bi bi-card-list"></i> Eventos</span>
                         <table class="table table-sm">
                           <thead>
                             <tr>
                               <th scope="col">Data</th>
                               <th scope="col">Tipo</th>
                               <th scope="col">Motivo</th>
+                              <th scope="col">CPF/CNPJ</th>
+                              <th scope="col">Nome</th>
+                              <th scope="col">Banco</th>
+                              <th scope="col">Abertura Conta</th>
                             </tr>
                           </thead>
                           <tbody class="table-group-divider">
@@ -101,6 +107,24 @@
                                 <td>{{ evento.data_evento }}</td>
                                 <td>{{ evento.tipo_evento }}</td>
                                 <td>{{ evento.motivo_evento }}</td>
+                                <td>{{ evento.cpf_cnpj }}</td>
+                                <td>{{ evento.nome_proprietario }}</td>
+                                <td class="fw-light">
+                                  <span class="fw-bold fst-italic">
+                                    {% if chave.banco %}
+                                      {{ chave.banco }}
+                                    {% else %}
+                                      {{ chave.participante }}
+                                    {% endif %}
+                                  </span>
+                                  <br />
+                                  <span class="fw-normal me-1">Agência:</span>{{ chave.agencia }}
+                                  <br />
+                                  <span class="fw-normal me-1">Conta:</span>{{ chave.numero_conta }}
+                                  <br />
+                                  <span class="fw-normal me-1">Tipo:</span>{{ chave.tipo_conta }}
+                                </td>
+                                <td>{{ evento.data_abertura_conta|date:"d/m/Y" }}</td>
                               </tr>
                             {% endfor %}
                           </tbody>

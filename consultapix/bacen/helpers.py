@@ -229,8 +229,8 @@ class PixReportGenerator:
 
             for evento in chave["eventos_vinculo"]:
                 banco = "Dados bancários não disponíveis"
-                if chave.get("banco"):
-                    banco = self.format_bank_cell(evento, chave.get("banco"))
+                if evento.get("banco"):
+                    banco = self.format_bank_cell(evento)
 
                 data_evento = "N/A"
                 if evento.get("data_evento"):
@@ -299,9 +299,10 @@ class PixReportGenerator:
         self.buffer.seek(0)
         return self.buffer
 
-    def format_bank_cell(self, event: dict, bank: str) -> str:
+    def format_bank_cell(self, event: dict) -> str:
+        banco = event.get("banco", "N/A")
         agencia = event.get("agencia", "N/A")
         conta = event.get("numero_conta", "N/A")
         tipo_conta = event.get("tipo_conta", "N/A")
 
-        return f"{bank}\nAgência: {agencia}\nConta: {conta}\nTipo: {tipo_conta}"
+        return f"{banco}\nAgência: {agencia}\nConta: {conta}\nTipo: {tipo_conta}"

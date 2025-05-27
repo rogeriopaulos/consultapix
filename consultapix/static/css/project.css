@@ -33,3 +33,7 @@ select[type="hidden" i] {
 #modals-consulta {
   display: none;
 }
+
+.modal-content {
+  font-size: 14px;
+}
