@@ -27,3 +27,12 @@ function processAll() {
 if (processAllButton) {
   processAllButton.addEventListener('click', processAll);
 }
+
+const toastElList = document.querySelectorAll('.toast')
+const toastList = [...toastElList].map(toastEl => new bootstrap.Toast(toastEl, {
+  autohide: true,
+  delay: 5000
+}));
+toastList.forEach(toast => {
+  toast.show();
+});

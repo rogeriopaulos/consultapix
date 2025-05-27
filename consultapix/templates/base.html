@@ -52,6 +52,22 @@
   </head>
   <body class="{% block bodyclass %}{% endblock bodyclass %}">
     {% block body %}
+      {% if messages_toast %}
+        <!-- Toasts Messages -->
+        <div aria-live="polite"
+             aria-atomic="true"
+             class="bg-body-secondary position-relative rounded-3">
+          <div class="toast-container top-0 end-0 p-3" id="toastPlacement">
+            <div class="toast">
+              <div class="toast-header">
+                <i class="bi bi-x-circle-fill me-2 text-danger"></i>
+                <strong class="me-auto">Erro</strong>
+              </div>
+              <div class="toast-body">{{ messages_toast|join:", " }}</div>
+            </div>
+          </div>
+        </div>
+      {% endif %}
       <div class="mb-1">
         <nav class="navbar navbar-expand-md navbar-light bg-light">
           <div class="container-fluid">

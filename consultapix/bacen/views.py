@@ -15,25 +15,42 @@ from consultapix.bacen.tasks import request_pix_by_cpfcnpj
 class CPFCNPJFormView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         form = RequisicaoBacenForm(initial={"tipo_requisicao": "1"})
-        return render(request, "bacen/partials/pix_modal.html", {"form": form})
+        return render(
+            request,
+            "bacen/partials/pix_modal.html",
+            {"form": form, "tipo_requisicao": "1"},
+        )
 
 
 class ChavePixFormView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         form = RequisicaoBacenForm(initial={"tipo_requisicao": "2"})
-        return render(request, "bacen/partials/pix_modal.html", {"form": form})
+        return render(
+            request,
+            "bacen/partials/pix_modal.html",
+            {"form": form, "tipo_requisicao": "2"},
+        )
 
 
 class RequisicaoBacenCreateView(LoginRequiredMixin, CreateView):
     model = RequisicaoBacen
     form_class = RequisicaoBacenForm
-    template_name = "bacen/partials/pix_modal.html"
+    template_name = "pages/home.html"
     success_url = reverse_lazy("core:home")
     success_message = "Requisição Bacen criada com sucesso!"
 
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
+
+    def form_invalid(self, form):
+        response = super().form_invalid(form)
+        requisicoes = RequisicaoBacen.objects.filter(user=self.request.user).order_by(
+            "-created",
+        )
+        response.context_data["requisicoes"] = requisicoes
+        response.context_data["messages_toast"] = form.errors["__all__"]
+        return response
 
 
 class ProcessarRequisicaoView(LoginRequiredMixin, View):

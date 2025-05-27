@@ -26,3 +26,17 @@ class RequisicaoBacenForm(forms.ModelForm):
             "termo_busca": "Termo de Busca (obrigatório)",
             "motivo": "Motivo (obrigatório)",
         }
+        help_texts = {
+            "motivo": "BO, IPL, Nº Caso LAB-LD, RIF, Processo Judicial...",
+        }
+
+    def clean(self):
+        cleaned_data = super().clean()
+        termo_busca = cleaned_data.get("termo_busca")
+        tipo_requisicao = cleaned_data.get("tipo_requisicao")
+
+        if tipo_requisicao == "1" and not termo_busca.isdigit():
+            message = "O termo de busca deve ser um CPF válido."
+            raise forms.ValidationError(message)
+
+        return cleaned_data

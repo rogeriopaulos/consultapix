@@ -1,12 +1,20 @@
-<div class="modal-dialog modal-dialog-centered">
+{% load crispy_forms_tags %}
+
+<div class="modal-dialog modal-dialog-centered" id="modal-pix-consulta">
   <div class="modal-content">
     <div class="modal-header">
-      <h5 class="modal-title">Nova Consulta</h5>
+      <h5 class="modal-title">
+        {% if tipo_requisicao == "1" %}
+          Consulta por CPF/CNPJ
+        {% else %}
+          Consulta por Chave Pix
+        {% endif %}
+      </h5>
     </div>
     <form action="{% url 'bacen:requisicao_bacen' %}" method="post">
       <div class="modal-body">
         {% csrf_token %}
-        {{ form.as_p }}
+        {{ form|crispy }}
       </div>
       <div class="modal-footer">
         <button type="submit" class="btn btn-primary">Adicionar</button>
