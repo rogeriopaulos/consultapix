@@ -38,3 +38,8 @@ select[type="hidden" i] {
 #requisicoes-table, .modal-content {
   font-size: 14px;
 }
+
+#info-text {
+  font-size: 14px;
+  color: #333;
+}
