@@ -6,44 +6,83 @@
   Home
 {% endblock title %}
 {% block content %}
-  <div class="row row-cols-1 row-cols-md-2 g-4">
-    <div class="col">
-      <div class="card text-center">
-        <img src="{% static 'images/img_card_pix.webp' %}"
-             class="card-img-top cp-img-cards"
-             alt="..." />
-        <div class="card-body">
-          <a href="#"
-             class="card-link"
-             hx-get="{% url 'bacen:cpf_cnpj' %}"
-             hx-target="#modals-consulta"
-             hx-trigger="click"
-             data-bs-toggle="modal"
-             data-bs-target="#modals-consulta">CPF/CNPJ</a>
-          <a href="#"
-             class="card-link"
-             hx-get="{% url 'bacen:chave' %}"
-             hx-target="#modals-consulta"
-             hx-trigger="click"
-             data-bs-toggle="modal"
-             data-bs-target="#modals-consulta">Chave</a>
+  <div class="row row-cols-1 row-cols-md-2 g-4 mt-3">
+    <div class="col text-center">
+      <div class="border border-2 rounded p-3 shadow bg-light">
+        <div class="row">
+          <div class="col">
+            <img src="{% static 'images/pix_logo_icon.webp' %}"
+                 alt="Logo Pix"
+                 width="30"
+                 class="me-2" />
+            <span class="fw-bold">Consulta Pix</span>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col">
+            <button class="btn btn-dark me-2 w-25 fw-bold"
+                    hx-get="{% url 'bacen:cpf_cnpj' %}"
+                    hx-target="#modals-consulta"
+                    hx-trigger="click"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modals-consulta">CPF/CNPJ</button>
+            <button class="btn btn-secondary me-2 w-25 fw-bold"
+                    hx-get="{% url 'bacen:chave' %}"
+                    hx-target="#modals-consulta"
+                    hx-trigger="click"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modals-consulta">Chave</button>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col">
-      <div class="card text-center">
-        <img src="{% static 'images/img_card_ccs.png' %}"
-             class="card-img-top cp-img-cards"
-             alt="..." />
-        <div class="card-body">
-          <a href="#" class="card-link" disabled>Consultar</a>
+    <div class="col text-center"
+         data-bs-toggle="tooltip"
+         data-bs-title="Em breve a consulta CCS estará disponível!">
+      <div class="border border-2 rounded p-3 shadow bg-light">
+        <div class="row">
+          <div class="col">
+            <img src="{% static 'images/img_card_ccs.png' %}"
+                 alt="Logo CCS"
+                 width="30"
+                 class="me-2" />
+            <span class="fw-bold">Consulta CCS</span>
+          </div>
+        </div>
+        <div class="row mt-3">
+          <div class="col">
+            <button class="btn btn-outline-dark me-2 w-25 fw-bold"
+                    hx-get="{% url 'bacen:chave' %}"
+                    hx-target="#modals-consulta"
+                    hx-trigger="click"
+                    data-bs-toggle="modal"
+                    data-bs-target="#modals-consulta"
+                    disabled>CPF/CNPJ</button>
+          </div>
         </div>
       </div>
     </div>
   </div>
   <div class="row mt-4">
     <div class="col">
-      <table class="table">
+      <p class="text-secondary fw-light">
+        <i class="bi bi-info-circle-fill"></i>
+        Adicione uma consulta clicando no botão "CPF/CNPJ" ou "Chave" acima.
+        Você pode consultar CPF, CNPJ ou Chaves Pix.
+        As consultas são processadas em segundo plano e você pode acompanhar o status delas na tabela abaixo.
+      </p>
+    </div>
+  </div>
+  <div class="row mt-3 border border-2 rounded p-3 shadow bg-light">
+    <div class="col">
+      <h5 class="mb-4 d-flex align-items-center justify-content-between">
+        <span class="fw-bold">
+          <i class="bi bi-clipboard-data me-2"></i>
+          Requisições
+        </span>
+        <span class="fs-6 fw-light text-secondary">Total: {{ requisicoes|length }}</span>
+      </h5>
+      <table class="table" id="requisicoes-table">
         <thead>
           <tr>
             <th scope="col">

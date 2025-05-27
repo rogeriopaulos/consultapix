@@ -5,6 +5,7 @@ body {
   font-optical-sizing: auto;
   font-weight: 500;
   font-style: normal;
+  background-color: #f0f0f0;
 }
 
 .alert-debug {
@@ -34,6 +35,6 @@ select[type="hidden" i] {
   display: none;
 }
 
-.modal-content {
+#requisicoes-table, .modal-content {
   font-size: 14px;
 }
