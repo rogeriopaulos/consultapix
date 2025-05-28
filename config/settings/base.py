@@ -80,6 +80,7 @@ THIRD_PARTY_APPS = [
     "allauth.socialaccount",
     "django_celery_beat",
     "django_celery_results",
+    "django_filters",
 ]
 
 LOCAL_APPS = [
