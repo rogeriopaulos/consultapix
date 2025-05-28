@@ -20,9 +20,9 @@ def main():
         ) from exc
 
     # This allows easy placement of apps within the interior
-    # consultapix directory.
+    # consultalab directory.
     current_path = Path(__file__).parent.resolve()
-    sys.path.append(str(current_path / "consultapix"))
+    sys.path.append(str(current_path / "consultalab"))
 
     execute_from_command_line(sys.argv)
 

@@ -10,7 +10,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=_source
 set BUILDDIR=_build
-set APP=..\consultapix
+set APP=..\consultalab
 
 if "%1" == "" goto html
 

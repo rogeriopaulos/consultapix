@@ -1,5 +1,5 @@
 """
-ASGI config for Consulta Pix project.
+ASGI config for ConsultaLab project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
@@ -15,9 +15,9 @@ from pathlib import Path
 from django.core.asgi import get_asgi_application
 
 # This allows easy placement of apps within the interior
-# consultapix directory.
+# consultalab directory.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
-sys.path.append(str(BASE_DIR / "consultapix"))
+sys.path.append(str(BASE_DIR / "consultalab"))
 
 # If DJANGO_SETTINGS_MODULE is unset, default to the local settings
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")

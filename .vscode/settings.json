@@ -1,6 +1,6 @@
 {
     "python.testing.pytestArgs": [
-        "consultapix"
+        "consultalab"
     ],
     "python.testing.unittestEnabled": false,
     "python.testing.pytestEnabled": true

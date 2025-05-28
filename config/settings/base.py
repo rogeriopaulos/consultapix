@@ -7,8 +7,8 @@ from pathlib import Path
 import environ
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
-# consultapix/
-APPS_DIR = BASE_DIR / "consultapix"
+# consultalab/
+APPS_DIR = BASE_DIR / "consultalab"
 env = environ.Env()
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=False)
@@ -83,10 +83,10 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "consultapix.users",
+    "consultalab.users",
     # Your stuff: custom apps go here
-    "consultapix.core",
-    "consultapix.bacen",
+    "consultalab.core",
+    "consultalab.bacen",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -94,7 +94,7 @@ INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 # MIGRATIONS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
-MIGRATION_MODULES = {"sites": "consultapix.contrib.sites.migrations"}
+MIGRATION_MODULES = {"sites": "consultalab.contrib.sites.migrations"}
 
 # AUTHENTICATION
 # ------------------------------------------------------------------------------
@@ -189,7 +189,7 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "consultapix.users.context_processors.allauth_settings",
+                "consultalab.users.context_processors.allauth_settings",
             ],
         },
     },
@@ -316,13 +316,13 @@ ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 # https://docs.allauth.org/en/latest/account/configuration.html
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # https://docs.allauth.org/en/latest/account/configuration.html
-ACCOUNT_ADAPTER = "consultapix.users.adapters.AccountAdapter"
+ACCOUNT_ADAPTER = "consultalab.users.adapters.AccountAdapter"
 # https://docs.allauth.org/en/latest/account/forms.html
-ACCOUNT_FORMS = {"signup": "consultapix.users.forms.UserSignupForm"}
+ACCOUNT_FORMS = {"signup": "consultalab.users.forms.UserSignupForm"}
 # https://docs.allauth.org/en/latest/socialaccount/configuration.html
-SOCIALACCOUNT_ADAPTER = "consultapix.users.adapters.SocialAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "consultalab.users.adapters.SocialAccountAdapter"
 # https://docs.allauth.org/en/latest/socialaccount/configuration.html
-SOCIALACCOUNT_FORMS = {"signup": "consultapix.users.forms.UserSocialSignupForm"}
+SOCIALACCOUNT_FORMS = {"signup": "consultalab.users.forms.UserSocialSignupForm"}
 
 
 # Your stuff...
