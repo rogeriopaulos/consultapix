@@ -1,7 +1,7 @@
 services:
   docs:
-    image: consultapix_local_docs
-    container_name: consultapix_local_docs
+    image: consultalab_local_docs
+    container_name: consultalab_local_docs
     build:
       context: .
       dockerfile: ./compose/local/docs/Dockerfile

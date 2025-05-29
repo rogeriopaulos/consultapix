@@ -14,7 +14,7 @@ services:
       context: .
       dockerfile: ./compose/production/django/Dockerfile
 
-    image: consultapix_production_django
+    image: consultalab_production_django
     volumes:
       - production_django_media:/app/consultalab/media
     depends_on:
@@ -29,7 +29,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
-    image: consultapix_production_postgres
+    image: consultalab_production_postgres
     volumes:
       - production_postgres_data:/var/lib/postgresql/data
       - production_postgres_data_backups:/backups
@@ -40,7 +40,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/traefik/Dockerfile
-    image: consultapix_production_traefik
+    image: consultalab_production_traefik
     depends_on:
       - django
     volumes:
@@ -59,24 +59,24 @@ services:
 
   celeryworker:
     <<: *django
-    image: consultapix_production_celeryworker
+    image: consultalab_production_celeryworker
     command: /start-celeryworker
 
   celerybeat:
     <<: *django
-    image: consultapix_production_celerybeat
+    image: consultalab_production_celerybeat
     command: /start-celerybeat
 
   flower:
     <<: *django
-    image: consultapix_production_flower
+    image: consultalab_production_flower
     command: /start-flower
 
   nginx:
     build:
       context: .
       dockerfile: ./compose/production/nginx/Dockerfile
-    image: consultapix_production_nginx
+    image: consultalab_production_nginx
     depends_on:
       - django
     volumes:

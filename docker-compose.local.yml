@@ -1,15 +1,15 @@
 volumes:
-  consultapix_local_postgres_data: {}
-  consultapix_local_postgres_data_backups: {}
-  consultapix_local_redis_data: {}
+  consultalab_local_postgres_data: {}
+  consultalab_local_postgres_data_backups: {}
+  consultalab_local_redis_data: {}
 
 services:
   django: &django
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
-    image: consultapix_local_django
-    container_name: consultapix_local_django
+    image: consultalab_local_django
+    container_name: consultalab_local_django
     depends_on:
       - postgres
       - redis
@@ -27,32 +27,32 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/postgres/Dockerfile
-    image: consultapix_production_postgres
-    container_name: consultapix_local_postgres
+    image: consultalab_production_postgres
+    container_name: consultalab_local_postgres
     volumes:
-      - consultapix_local_postgres_data:/var/lib/postgresql/data
-      - consultapix_local_postgres_data_backups:/backups
+      - consultalab_local_postgres_data:/var/lib/postgresql/data
+      - consultalab_local_postgres_data_backups:/backups
     env_file:
       - ./.envs/.local/.postgres
 
   mailpit:
     image: docker.io/axllent/mailpit:latest
-    container_name: consultapix_local_mailpit
+    container_name: consultalab_local_mailpit
     ports:
       - "8025:8025"
 
   redis:
     image: docker.io/redis:6
-    container_name: consultapix_local_redis
+    container_name: consultalab_local_redis
 
     volumes:
-      - consultapix_local_redis_data:/data
+      - consultalab_local_redis_data:/data
 
 
   celeryworker:
     <<: *django
-    image: consultapix_local_celeryworker
-    container_name: consultapix_local_celeryworker
+    image: consultalab_local_celeryworker
+    container_name: consultalab_local_celeryworker
     depends_on:
       - redis
       - postgres
@@ -62,8 +62,8 @@ services:
 
   celerybeat:
     <<: *django
-    image: consultapix_local_celerybeat
-    container_name: consultapix_local_celerybeat
+    image: consultalab_local_celerybeat
+    container_name: consultalab_local_celerybeat
     depends_on:
       - redis
       - postgres
@@ -73,8 +73,8 @@ services:
 
   flower:
     <<: *django
-    image: consultapix_local_flower
-    container_name: consultapix_local_flower
+    image: consultalab_local_flower
+    container_name: consultalab_local_flower
     ports:
       - '5555:5555'
     command: /start-flower
