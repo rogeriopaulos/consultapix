@@ -6,9 +6,9 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from consultapix.bacen.models import ChavePix
-from consultapix.bacen.models import EventoVinculo
-from consultapix.bacen.models import RequisicaoBacen
+from consultalab.bacen.models import ChavePix
+from consultalab.bacen.models import EventoVinculo
+from consultalab.bacen.models import RequisicaoBacen
 
 User = get_user_model()
 

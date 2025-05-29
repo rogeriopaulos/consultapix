@@ -1,6 +1,6 @@
-# Consulta Pix
+# ConsultaLab
 
-Aplicação para consulta de dados do Pix de indivíduos perante o Bacen.
+Plataforma para acesso e consulta de recursos restritos, voltada a unidades especializadas em investigações financeiras e afins.
 
 [![Construído com Cookiecutter Django](https://img.shields.io/badge/built%20with-Cookiecutter%20Django-ff69b4.svg?logo=cookiecutter)](https://github.com/cookiecutter/cookiecutter-django/)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
@@ -27,7 +27,7 @@ Para conveniência, você pode manter seu usuário normal logado no Chrome e seu
 
 Executando verificações de tipos com mypy:
 
-    $ mypy consultapix
+    $ mypy consultalab
 
 ### Cobertura de Testes
 
@@ -48,7 +48,7 @@ Este aplicativo vem com o Celery.
 Para executar um worker do Celery:
 
 ```bash
-cd consultapix
+cd consultalab
 celery -A config.celery_app worker -l info
 ```
 
@@ -57,14 +57,14 @@ Por favor, note: Para que a mágica de importação do Celery funcione, é impor
 Para executar [tarefas periódicas](https://docs.celeryq.dev/en/stable/userguide/periodic-tasks.html), você precisará iniciar o serviço de agendador do Celery Beat. Você pode iniciá-lo como um processo independente:
 
 ```bash
-cd consultapix
+cd consultalab
 celery -A config.celery_app beat
 ```
 
 ou você pode embutir o serviço beat dentro de um worker com a opção `-B` (não recomendado para uso em produção):
 
 ```bash
-cd consultapix
+cd consultalab
 celery -A config.celery_app worker -B -l info
 ```
 

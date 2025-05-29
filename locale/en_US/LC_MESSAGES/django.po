@@ -1,4 +1,4 @@
-# Translations for the Consulta Pix project
+# Translations for the ConsultaLab project
 # Copyright (C) 2025 Rogerio Paulo
 # Rogerio Paulo <rogerio.paulo@pc.pi.gov.br>, 2025.
 #

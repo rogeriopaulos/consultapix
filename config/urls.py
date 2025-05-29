@@ -7,14 +7,14 @@ from django.urls import path
 from django.views import defaults as default_views
 
 urlpatterns = [
-    path("", include("consultapix.core.urls", namespace="core")),
+    path("", include("consultalab.core.urls", namespace="core")),
     # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
     # User management
-    path("usuarios/", include("consultapix.users.urls", namespace="users")),
+    path("usuarios/", include("consultalab.users.urls", namespace="users")),
     path("contas/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
-    path("bacen/", include("consultapix.bacen.urls", namespace="bacen")),
+    path("bacen/", include("consultalab.bacen.urls", namespace="bacen")),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
