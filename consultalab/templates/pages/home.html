@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% load static %}
+{% load static crispy_forms_tags %}
 
 {% block title %}
   Home
@@ -80,15 +80,22 @@
           <i class="bi bi-clipboard-data me-2"></i>
           Requisições
         </span>
-        <span class="fs-6 fw-light text-secondary">Total: {{ requisicoes|length }}</span>
+        <span class="fs-6 fw-light text-secondary">Total: {{ requisicoes_filter.qs|length }}</span>
       </h5>
+      <div id="form-filters">
+        <form method="get" class="d-flex">
+          {{ requisicoes_filter.form.as_p }}
+          <button type="submit" class="btn btn-primary ms-2">Filtrar</button>
+        </form>
+      </div>
       <table class="table" id="requisicoes-table">
         <thead>
           <tr>
             <th scope="col">
-              <div class="form-check">
+              {% comment %} <div class="form-check">
                 <input class="form-check-input" type="checkbox" value="" id="checkAll" />
-              </div>
+              </div> {% endcomment %}
+              #
             </th>
             <th scope="col">Termo</th>
             <th scope="col">Tipo</th>
@@ -99,12 +106,13 @@
           </tr>
         </thead>
         <tbody>
-          {% for requisicao in requisicoes %}
+          {% for requisicao in requisicoes_filter.qs %}
             <tr class="smooth requisicao-rows" id="requisicao-{{ requisicao.id }}">
               <th scope="row">
-                <div class="form-check">
+                {% comment %} <div class="form-check">
                   <input class="form-check-input" type="checkbox" value="" id="checkRow" />
-                </div>
+                </div> {% endcomment %}
+                {{ forloop.revcounter }}
               </th>
               <td>
                 {% if requisicao.processada %}
