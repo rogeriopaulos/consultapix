@@ -82,11 +82,13 @@
         </span>
         <span class="fs-6 fw-light text-secondary">Total: {{ requisicoes_filter.qs|length }}</span>
       </h5>
-      <div id="form-filters">
-        <form method="get" class="d-flex">
-          {{ requisicoes_filter.form.as_p }}
-          <button type="submit" class="btn btn-primary ms-2">Filtrar</button>
-        </form>
+      <div class="row" id="form-filters">
+        <div class="col">
+          <form method="get" class="form-inline d-flex align-items-center">
+            {{ requisicoes_filter.form|crispy }}
+            <button type="submit" class="btn btn-primary ms-2">Filtrar</button>
+          </form>
+        </div>
       </div>
       <table class="table" id="requisicoes-table">
         <thead>

@@ -1,18 +1,39 @@
 import django_filters
+from django.forms import TextInput
 
 from consultalab.bacen.models import RequisicaoBacen
 
 
 class RequisicaoBacenFilter(django_filters.FilterSet):
     created = django_filters.DateFromToRangeFilter(
-        widget=django_filters.widgets.RangeWidget(attrs={'placeholder': 'YYYY/MM/DD', 'type': 'date'}),
-        label='Data de criação',
-        help_text='Filtra as requisições pela data de criação.',
+        widget=django_filters.widgets.RangeWidget(
+            attrs={
+                "placeholder": "YYYY/MM/DD",
+                "type": "date",
+                "class": "form-control form-control-sm",
+            },
+        ),
+        label="",
+    )
+    termo_busca = django_filters.CharFilter(
+        lookup_expr="icontains",
+        label="Termo de busca",
+        widget=TextInput(
+            attrs={
+                "class": "form-control form-control-sm",
+            },
+        ),
+    )
+    motivo = django_filters.CharFilter(
+        lookup_expr="icontains",
+        label="Motivo",
+        widget=TextInput(
+            attrs={
+                "class": "form-control form-control-sm",
+            },
+        ),
     )
 
     class Meta:
         model = RequisicaoBacen
-        fields = {
-            'termo_busca': ['icontains'],
-            'motivo': ['icontains']
-        }
+        fields = ["created", "termo_busca", "motivo"]

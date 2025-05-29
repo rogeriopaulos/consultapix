@@ -43,3 +43,10 @@ select[type="hidden" i] {
   font-size: 14px;
   color: #333;
 }
+
+#div_id_created {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
