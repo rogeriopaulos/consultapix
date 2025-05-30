@@ -17,23 +17,15 @@ class RequisicaoBacenFilter(django_filters.FilterSet):
     )
     termo_busca = django_filters.CharFilter(
         lookup_expr="icontains",
-        label="Termo de busca",
+        label="",
         widget=TextInput(
             attrs={
-                "class": "form-control form-control-sm",
+                "class": "form-control form-control-sm ms-5",
             },
-        ),
-    )
-    motivo = django_filters.CharFilter(
-        lookup_expr="icontains",
-        label="Motivo",
-        widget=TextInput(
-            attrs={
-                "class": "form-control form-control-sm",
-            },
+            placeholder="Termo de busca (ex: CNPJ, CPF, Nome, etc.)",
         ),
     )
 
     class Meta:
         model = RequisicaoBacen
-        fields = ["created", "termo_busca", "motivo"]
+        fields = ["created", "termo_busca"]

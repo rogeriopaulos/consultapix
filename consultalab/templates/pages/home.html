@@ -86,7 +86,9 @@
         <div class="col">
           <form method="get" class="form-inline d-flex align-items-center">
             {{ requisicoes_filter.form|crispy }}
-            <button type="submit" class="btn btn-primary ms-2">Filtrar</button>
+            <button type="submit" class="btn btn-outline-primary btn-sm" id="filter-btn">
+              <i class="bi bi-filter"></i> Filtrar
+            </button>
           </form>
         </div>
       </div>

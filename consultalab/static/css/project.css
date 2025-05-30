@@ -50,3 +50,8 @@ select[type="hidden" i] {
   align-items: center;
   justify-content: center;
 }
+
+#filter-btn {
+  margin-top: -16px;
+  margin-left: 60px;
+}
