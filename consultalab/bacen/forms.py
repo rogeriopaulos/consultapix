@@ -1,5 +1,9 @@
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import HTML, Column, Field, Layout, Row
+from crispy_forms.layout import HTML
+from crispy_forms.layout import Column
+from crispy_forms.layout import Field
+from crispy_forms.layout import Layout
+from crispy_forms.layout import Row
 from django import forms
 
 from consultalab.bacen.models import RequisicaoBacen
@@ -45,35 +49,46 @@ class RequisicaoBacenForm(forms.ModelForm):
 
 
 class RequisicaoBacenFilterFormHelper(FormHelper):
-    form_method = 'GET'
+    form_method = "GET"
     layout = Layout(
         Row(
             Column(
-                HTML('<label for="div_id_created" class="form-label">Data de criação</label>'),
-                Field("created")
+                HTML(
+                    """
+                        <label for="div_id_created" class="form-label">
+                            Data de criação
+                        </label>
+                    """,
+                ),
+                Field("created"),
             ),
             Column(
                 Row(
                     Column(
                         Field(
-                            HTML('<label for="div_id_created" class="form-label ms-5">Pesquisar</label>'),
+                            HTML(
+                                '<label for="div_id_created" class="form-label ms-5">Pesquisar</label>',  # noqa: E501
+                            ),
                             "termo_busca",
-                            placeholder="cpf, cnpj, motivo..."
-                        )
+                            placeholder="cpf, cnpj, motivo...",
+                        ),
+                        css_class="col-8",
                     ),
                     Column(
                         HTML(
                             """
-                            <button type="button" class="btn btn-sm btn-outline-primary ms-5 mt-3">
+                            <button type="button"
+                                    class="btn btn-sm btn-outline-primary ms-5 mt-3"
+                                    id="filter-button">
                                 <i class="bi bi-filter"></i> Filtrar
                             </button>
-                            """
-                        )
+                            """,
+                        ),
                     ),
-                    css_class="align-items-center"
+                    css_class="align-items-center",
                 ),
-                css_class='d-flex justify-content-end'
+                css_class="ms-5",
             ),
-            css_class='d-flex justify-content-between align-items-center'
+            css_class="d-flex justify-content-between align-items-center",
         ),
     )

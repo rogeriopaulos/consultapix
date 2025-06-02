@@ -60,3 +60,15 @@ select[type="hidden" i] {
   font-size: 12px;
   color: #6c757d;
 }
+
+button#filter-button {
+    font-size: 12px;
+}
+
+input#id_created_0 {
+  margin-right: 4px;
+}
+
+input#id_created_1 {
+  margin-left: 4px;
+}
