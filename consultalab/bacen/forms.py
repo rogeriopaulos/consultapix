@@ -1,5 +1,5 @@
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Submit
+from crispy_forms.layout import HTML, Column, Field, Layout, Row
 from django import forms
 
 from consultalab.bacen.models import RequisicaoBacen
@@ -47,7 +47,33 @@ class RequisicaoBacenForm(forms.ModelForm):
 class RequisicaoBacenFilterFormHelper(FormHelper):
     form_method = 'GET'
     layout = Layout(
-        'created',
-        'termo_busca',
-        Submit('submit', 'Filtrar'),
+        Row(
+            Column(
+                HTML('<label for="div_id_created" class="form-label">Data de criação</label>'),
+                Field("created")
+            ),
+            Column(
+                Row(
+                    Column(
+                        Field(
+                            HTML('<label for="div_id_created" class="form-label ms-5">Pesquisar</label>'),
+                            "termo_busca",
+                            placeholder="cpf, cnpj, motivo..."
+                        )
+                    ),
+                    Column(
+                        HTML(
+                            """
+                            <button type="button" class="btn btn-sm btn-outline-primary ms-5 mt-3">
+                                <i class="bi bi-filter"></i> Filtrar
+                            </button>
+                            """
+                        )
+                    ),
+                    css_class="align-items-center"
+                ),
+                css_class='d-flex justify-content-end'
+            ),
+            css_class='d-flex justify-content-between align-items-center'
+        ),
     )
