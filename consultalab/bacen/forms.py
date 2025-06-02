@@ -1,3 +1,5 @@
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Layout, Submit
 from django import forms
 
 from consultalab.bacen.models import RequisicaoBacen
@@ -40,3 +42,12 @@ class RequisicaoBacenForm(forms.ModelForm):
             raise forms.ValidationError(message)
 
         return cleaned_data
+
+
+class RequisicaoBacenFilterFormHelper(FormHelper):
+    form_method = 'GET'
+    layout = Layout(
+        'created',
+        'termo_busca',
+        Submit('submit', 'Filtrar'),
+    )

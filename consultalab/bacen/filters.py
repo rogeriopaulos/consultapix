@@ -22,7 +22,6 @@ class RequisicaoBacenFilter(django_filters.FilterSet):
             attrs={
                 "class": "form-control form-control-sm ms-5",
             },
-            placeholder="Termo de busca (ex: CNPJ, CPF, Nome, etc.)",
         ),
     )
 
