@@ -1,4 +1,5 @@
 import django_filters
+from django.db.models import Q
 from django.forms import TextInput
 
 from consultalab.bacen.models import RequisicaoBacen
@@ -15,9 +16,9 @@ class RequisicaoBacenFilter(django_filters.FilterSet):
         ),
         label="",
     )
-    termo_busca = django_filters.CharFilter(
-        lookup_expr="icontains",
+    busca = django_filters.CharFilter(
         label="",
+        method="filter_busca",
         widget=TextInput(
             attrs={
                 "class": "form-control form-control-sm ms-5",
@@ -27,4 +28,10 @@ class RequisicaoBacenFilter(django_filters.FilterSet):
 
     class Meta:
         model = RequisicaoBacen
-        fields = ["created", "termo_busca"]
+        fields = ["created", "busca"]  # Apenas dois campos
+
+    def filter_busca(self, queryset, name, value):
+        return queryset.filter(
+            Q(termo_busca__icontains=value) |
+            Q(motivo__icontains=value)
+        )

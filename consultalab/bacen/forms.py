@@ -69,7 +69,7 @@ class RequisicaoBacenFilterFormHelper(FormHelper):
                             HTML(
                                 '<label for="div_id_created" class="form-label ms-5">Pesquisar</label>',  # noqa: E501
                             ),
-                            "termo_busca",
+                            "busca",
                             placeholder="cpf, cnpj, motivo...",
                         ),
                         css_class="col-8",

@@ -35,7 +35,8 @@ select[type="hidden" i] {
   display: none;
 }
 
-#requisicoes-table, .modal-content {
+#requisicoes-table,
+.modal-content {
   font-size: 14px;
 }
 
@@ -62,7 +63,8 @@ select[type="hidden" i] {
 }
 
 button#filter-button {
-    font-size: 12px;
+  font-size: 12px;
+  margin-top: 12px;
 }
 
 input#id_created_0 {
