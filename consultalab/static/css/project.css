@@ -64,7 +64,11 @@ select[type="hidden" i] {
 
 button#filter-button {
   font-size: 12px;
-  margin-top: 12px;
+  margin-top: 14px;
+}
+
+a#clear-filters {
+  margin-top: 14px;
 }
 
 input#id_created_0 {
@@ -73,4 +77,10 @@ input#id_created_0 {
 
 input#id_created_1 {
   margin-left: 4px;
+}
+
+@media (max-width: 1200px) {
+  button#filter-button {
+    font-size: 9px;
+  }
 }

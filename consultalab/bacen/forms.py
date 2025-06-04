@@ -78,12 +78,21 @@ class RequisicaoBacenFilterFormHelper(FormHelper):
                         HTML(
                             """
                             <button type="submit"
-                                    class="btn btn-sm btn-outline-primary ms-5 mt-3"
+                                    class="btn btn-sm btn-outline-primary ms-5"
                                     id="filter-button">
                                 <i class="bi bi-filter"></i> Filtrar
                             </button>
+                            <a href="{% url 'core:home' %}"
+                               class="text-decoration-none text-danger"
+                               id="clear-filters"
+                               data-bs-toggle="tooltip"
+                               data-bs-placement="top"
+                               data-bs-title="Limpar filtros">
+                               <i class="bi bi-x-circle"></i>
+                            </a>
                             """,
                         ),
+                        css_class="col d-flex justify-content-around align-items-center",  # noqa: E501
                     ),
                     css_class="align-items-center",
                 ),
