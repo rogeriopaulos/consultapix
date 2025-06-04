@@ -1,3 +1,9 @@
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import HTML
+from crispy_forms.layout import Column
+from crispy_forms.layout import Field
+from crispy_forms.layout import Layout
+from crispy_forms.layout import Row
 from django import forms
 
 from consultalab.bacen.models import RequisicaoBacen
@@ -40,3 +46,58 @@ class RequisicaoBacenForm(forms.ModelForm):
             raise forms.ValidationError(message)
 
         return cleaned_data
+
+
+class RequisicaoBacenFilterFormHelper(FormHelper):
+    form_method = "GET"
+    layout = Layout(
+        Row(
+            Column(
+                HTML(
+                    """
+                    <label for="id_created" class="form-label">
+                        Data de criação
+                    </label>
+                    """,
+                ),
+                Field("created"),
+            ),
+            Column(
+                Row(
+                    Column(
+                        Field(
+                            HTML(
+                                '<label for="div_id_created" class="form-label ms-5">Pesquisar</label>',  # noqa: E501
+                            ),
+                            "busca",
+                            placeholder="cpf, cnpj, motivo...",
+                        ),
+                        css_class="col-8",
+                    ),
+                    Column(
+                        HTML(
+                            """
+                            <button type="submit"
+                                    class="btn btn-sm btn-outline-primary ms-5"
+                                    id="filter-button">
+                                <i class="bi bi-filter"></i> Filtrar
+                            </button>
+                            <a href="{% url 'core:home' %}"
+                               class="text-decoration-none text-danger"
+                               id="clear-filters"
+                               data-bs-toggle="tooltip"
+                               data-bs-placement="top"
+                               data-bs-title="Limpar filtros">
+                               <i class="bi bi-x-circle"></i>
+                            </a>
+                            """,
+                        ),
+                        css_class="col d-flex justify-content-around align-items-center",  # noqa: E501
+                    ),
+                    css_class="align-items-center",
+                ),
+                css_class="ms-5",
+            ),
+            css_class="d-flex justify-content-between align-items-center",
+        ),
+    )
