@@ -55,7 +55,7 @@ class RequisicaoBacenFilterFormHelper(FormHelper):
             Column(
                 HTML(
                     """
-                    <label for="div_id_created" class="form-label">
+                    <label for="id_created" class="form-label">
                         Data de criação
                     </label>
                     """,
