@@ -77,7 +77,7 @@ class RequisicaoBacenFilterFormHelper(FormHelper):
                     Column(
                         HTML(
                             """
-                            <button type="button"
+                            <button type="submit"
                                     class="btn btn-sm btn-outline-primary ms-5 mt-3"
                                     id="filter-button">
                                 <i class="bi bi-filter"></i> Filtrar

@@ -28,10 +28,9 @@ class RequisicaoBacenFilter(django_filters.FilterSet):
 
     class Meta:
         model = RequisicaoBacen
-        fields = ["created", "busca"]  # Apenas dois campos
+        fields = ["created", "busca"]
 
     def filter_busca(self, queryset, name, value):
         return queryset.filter(
-            Q(termo_busca__icontains=value) |
-            Q(motivo__icontains=value)
+            Q(termo_busca__icontains=value) | Q(motivo__icontains=value),
         )

@@ -80,27 +80,18 @@
           <i class="bi bi-clipboard-data me-2"></i>
           Requisições
         </span>
-        <span class="fs-6 fw-light text-secondary">Total: {{ requisicoes_filter.qs|length }}</span>
+        <span class="fs-6 fw-light text-secondary">Total: {{ requisicoes|length }}</span>
       </h5>
       <div class="row" id="form-filters">
         <div class="col">
           <form method="get" class="form-inline" id="requisicoes-filter-form">
-            {% crispy requisicoes_filter.form requisicoes_filter.form.helper %}
-            {% comment %} <button type="submit" class="btn btn-outline-primary btn-sm" id="filter-btn">
-              <i class="bi bi-filter"></i> Filtrar
-            </button> {% endcomment %}
+            {% crispy requisicoes_filter_form requisicoes_filter_form.helper %}
           </form>
         </div>
       </div>
       <table class="table" id="requisicoes-table">
         <thead>
           <tr>
-            <th scope="col">
-              {% comment %} <div class="form-check">
-                <input class="form-check-input" type="checkbox" value="" id="checkAll" />
-              </div> {% endcomment %}
-              #
-            </th>
             <th scope="col">Termo</th>
             <th scope="col">Tipo</th>
             <th scope="col">Motivo</th>
@@ -110,14 +101,8 @@
           </tr>
         </thead>
         <tbody>
-          {% for requisicao in requisicoes_filter.qs %}
+          {% for requisicao in requisicoes %}
             <tr class="smooth requisicao-rows" id="requisicao-{{ requisicao.id }}">
-              <th scope="row">
-                {% comment %} <div class="form-check">
-                  <input class="form-check-input" type="checkbox" value="" id="checkRow" />
-                </div> {% endcomment %}
-                {{ forloop.revcounter }}
-              </th>
               <td>
                 {% if requisicao.processada %}
                   <a href="#"

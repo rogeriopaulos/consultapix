@@ -10,12 +10,8 @@ from consultalab.bacen.models import RequisicaoBacen
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
-    """
-    View for the home page.
-    """
-
     template_name = "pages/home.html"
-    page_size = 2
+    page_size = 10
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -23,25 +19,23 @@ class HomeView(LoginRequiredMixin, TemplateView):
         requisicao_filter = RequisicaoBacenFilter(self.request.GET, queryset=qs)
 
         requisicao_filter.form.helper = RequisicaoBacenFilterFormHelper()
+        requisicao_filter_form = requisicao_filter.form
+        requisicao_filter_qs = requisicao_filter.qs
 
-        paginator = Paginator(requisicao_filter.qs, self.page_size)
+        paginator = Paginator(requisicao_filter_qs, self.page_size)
         page_number = self.request.GET.get("page")
         try:
-            paginated_objects = paginator.page(page_number)
+            requisicao_object = paginator.page(page_number)
         except PageNotAnInteger:
-            paginated_objects = paginator.page(1)
+            requisicao_object = paginator.page(1)
         except EmptyPage:
-            paginated_objects = paginator.page(paginator.num_pages)
+            requisicao_object = paginator.page(paginator.num_pages)
 
-        context["requisicoes_filter"] = requisicao_filter
-        context["requisicoes"] = paginated_objects
+        context["requisicoes"] = requisicao_object
+        context["requisicoes_filter_form"] = requisicao_filter_form
 
         return context
 
 
 class AboutView(LoginRequiredMixin, TemplateView):
-    """
-    View for the about page.
-    """
-
     template_name = "pages/about.html"
