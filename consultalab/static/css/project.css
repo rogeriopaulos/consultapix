@@ -79,6 +79,14 @@ input#id_created_1 {
   margin-left: 4px;
 }
 
+tr.htmx-swapping td {
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+  transition:
+    opacity 0.5s ease-out,
+    transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
 @media (max-width: 1200px) {
   button#filter-button {
     font-size: 9px;

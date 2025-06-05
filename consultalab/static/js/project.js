@@ -36,3 +36,7 @@ const toastList = [...toastElList].map(toastEl => new bootstrap.Toast(toastEl, {
 toastList.forEach(toast => {
   toast.show();
 });
+
+document.body.addEventListener("showMessage", function(evt){
+    alert(evt.detail.value);
+})

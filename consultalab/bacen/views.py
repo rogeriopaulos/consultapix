@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import FileResponse
 from django.shortcuts import render
@@ -10,6 +12,8 @@ from consultalab.bacen.forms import RequisicaoBacenForm
 from consultalab.bacen.helpers import PixReportGenerator
 from consultalab.bacen.models import RequisicaoBacen
 from consultalab.bacen.tasks import request_pix_by_cpfcnpj
+
+logger = logging.getLogger(__name__)
 
 
 class CPFCNPJFormView(LoginRequiredMixin, View):
@@ -115,3 +119,33 @@ class RequisicaoBacenPDFView(LoginRequiredMixin, View):
         )
 
         return FileResponse(buffer, as_attachment=True, filename="requisicao_bacen.pdf")
+
+
+class RequisicaoBacenDeleteView(LoginRequiredMixin, View):
+    def delete(self, request, *args, **kwargs):
+        requisicao_id = kwargs.get("requisicao_id")
+        response = render(
+            request,
+            "bacen/partials/empty_content.html",
+            {"requisicao": None},
+        )
+        has_error = False
+
+        try:
+            requisicao = RequisicaoBacen.objects.get(id=requisicao_id)
+            if requisicao.user == request.user:
+                requisicao.delete()
+                response.status_code = 200
+                return response
+        except RequisicaoBacen.DoesNotExist:
+            logger.exception(
+                "Requisição Bacen não encontrada ou não pertence ao usuário.",
+            )
+            has_error = True
+
+        if has_error:
+            response["HX-Trigger"] = (
+                '{"showMessage": "Ocorreu um erro ao tentar excluir a requisição."}'
+            )
+            response.status_code = 400
+        return response

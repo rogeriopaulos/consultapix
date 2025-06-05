@@ -143,14 +143,17 @@
                        data-bs-title="Processar consulta"></i>
                   </a>
                 {% endif %}
-                <a href="#" class="text-decoration-none text-danger">
+                <a href="#"
+                   class="text-decoration-none text-danger"
+                   hx-delete="{% url 'bacen:requisicao_bacen_remover' requisicao.id %}"
+                   hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'
+                   hx-confirm="Você tem certeza que deseja remover esta requisição?"
+                   hx-target="#requisicao-{{ requisicao.id }}"
+                   hx-swap="outerHTML swap:1s">
                   <i class="bi bi-trash me-2"
                      data-bs-toggle="tooltip"
                      data-bs-title="Remover consulta"></i>
                 </a>
-                {% comment %} <a href="#" class="text-decoration-none text-secondary">
-                  <i class="bi bi-pencil-square" data-bs-toggle="tooltip" data-bs-title="Editar"></i>
-                </a> {% endcomment %}
               </td>
             </tr>
           {% endfor %}
