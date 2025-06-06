@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django_celery_results.models import TaskResult
 
-from consultalab.bacen.helpers import BacenRequestApi
+from consultalab.bacen.api import BacenRequestApi
 from consultalab.bacen.helpers import has_object
 from consultalab.core.models import AppModel
 

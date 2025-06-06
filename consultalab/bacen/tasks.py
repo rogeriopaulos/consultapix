@@ -2,36 +2,61 @@ import logging
 
 from celery import shared_task
 
-from consultalab.bacen.helpers import BacenRequestApi
-from consultalab.bacen.models import RequisicaoBacen  # ChavePix, EventoVinculo
+from consultalab.bacen.api import BacenRequestApi
+from consultalab.bacen.helpers import clean_chave_pix_data
+from consultalab.bacen.models import ChavePix
+from consultalab.bacen.models import RequisicaoBacen
 
 logger = logging.getLogger(__name__)
 
 
-@shared_task(name="request_pix_by_cpfcnpj")
-def request_pix_by_cpfcnpj(value: str, reason: str, requisicao_id: int) -> dict:
+@shared_task(name="request_bacen_pix")
+def request_bacen_pix(requisicao_id: int) -> dict:
     """
     Tarefa Celery para buscar informações de PIX por CPF ou CNPJ.
     """
-    if not value:
-        logger.error("Valor vazio fornecido para busca de PIX por CPF/CNPJ")
+    requisicao = RequisicaoBacen.objects.get(id=requisicao_id)
+    value = requisicao.termo_busca
+    reason = requisicao.motivo
+
+    if not value and not reason:
+        logger.error("Um valor e um motivo devem ser informados.")
         return {
             "status": "error",
-            "message": "Valor vazio fornecido para busca de PIX por CPF/CNPJ",
+            "message": "Um valor e um motivo devem ser informados.",
         }
 
-    logger.info(f"Iniciando busca de PIX por CPF/CNPJ: {value}")
-    response = BacenRequestApi().request_pix_by_cpfcnpj(value, reason)
-    if not response.status == 200:
+    logger.info("Iniciando busca de PIX por CPF/CNPJ: %s", value)
+
+    response = BacenRequestApi().get_pix_by_cpf_cnpj(value, reason)
+
+    if response.get("status") != "success":
+        logger.error(response.get("message", "Erro desconhecido"))
         return {
-            "status": "error",
-            "message": response.message,
+            "status": response.get("status", "error"),
+            "message": response.get("message", "Erro desconhecido"),
         }
+
     logger.info("Tarefa de busca de PIX por CPF/CNPJ concluída")
 
-    requisicao = RequisicaoBacen.objects.get(id=requisicao_id)
+    data = response.get("data", {})
+    if requisicao.tipo_requisicao == "1":
+        [create_chave_pix(vinculo, requisicao) for vinculo in data["vinculosPix"]]
+    elif requisicao.tipo_requisicao == "2":
+        create_chave_pix(data, requisicao)
 
     return {
         "status": "success",
-        "message": "Dados de busca de PIX por CPF/CNPJ salvos com sucesso",
+        "message": "Dados de busca de PIX por CPF/CNPJ processados com sucesso",
     }
+
+
+def create_chave_pix(chave: dict, requisicao: RequisicaoBacen) -> None:
+    clean_data = clean_chave_pix_data(chave)
+    clean_data["requisicao_bacen"] = requisicao
+    eventos = clean_data.pop("eventos_vinculo", [])
+
+    chave_pix = ChavePix.objects.create(**clean_data)
+
+    for evento in eventos:
+        chave_pix.eventos_vinculo.create(**evento)

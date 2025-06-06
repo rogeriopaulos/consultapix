@@ -9,9 +9,9 @@ from django.views.generic import DetailView
 from django.views.generic import View
 
 from consultalab.bacen.forms import RequisicaoBacenForm
-from consultalab.bacen.helpers import PixReportGenerator
 from consultalab.bacen.models import RequisicaoBacen
-from consultalab.bacen.tasks import request_pix_by_cpfcnpj
+from consultalab.bacen.report import PixReportGenerator
+from consultalab.bacen.tasks import request_bacen_pix
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +62,7 @@ class ProcessarRequisicaoView(LoginRequiredMixin, View):
         requisicao_id = kwargs.get("requisicao_id")
         requisicao = RequisicaoBacen.objects.get(id=requisicao_id)
 
-        task = request_pix_by_cpfcnpj.delay(requisicao.termo_busca)
+        task = request_bacen_pix.delay(requisicao.id)
         requisicao.task_id = task.id
         requisicao.processada = True
         requisicao.save()

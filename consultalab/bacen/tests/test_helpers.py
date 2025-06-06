@@ -1,6 +1,6 @@
 from django.conf import settings
 
-from consultalab.bacen.helpers import BacenRequestApi
+from consultalab.bacen.api import BacenRequestApi
 from consultalab.bacen.helpers import camelcase_to_snake_case
 
 
