@@ -39,11 +39,8 @@ def request_bacen_pix(requisicao_id: int) -> dict:
 
     logger.info("Tarefa de busca de PIX por CPF/CNPJ concluída")
 
-    data = response.get("data", {})
-    if requisicao.tipo_requisicao == "1":
-        [create_chave_pix(vinculo, requisicao) for vinculo in data["vinculosPix"]]
-    elif requisicao.tipo_requisicao == "2":
-        create_chave_pix(data, requisicao)
+    chaves = response.get("data", [])
+    [create_chave_pix(chave, requisicao) for chave in chaves]
 
     return {
         "status": "success",

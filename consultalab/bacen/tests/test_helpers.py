@@ -14,8 +14,8 @@ class TestBacenRequestApi:
         )
 
         assert isinstance(response, dict)
-        assert "vinculosPix" in response
-        assert len(response["vinculosPix"]) > 0
+        assert "data" in response
+        assert len(response["data"]) > 0
 
     def test_get_pix_by_cnpj(self):
         response = self.request_api.get_pix_by_cpf_cnpj(
@@ -24,8 +24,8 @@ class TestBacenRequestApi:
         )
 
         assert isinstance(response, dict)
-        assert "vinculosPix" in response
-        assert len(response["vinculosPix"]) > 0
+        assert "data" in response
+        assert len(response["data"]) > 0
 
 
 def test_camelcase_to_snake_case():

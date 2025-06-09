@@ -2,7 +2,6 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django_celery_results.models import TaskResult
 
-from consultalab.bacen.api import BacenRequestApi
 from consultalab.bacen.helpers import has_object
 from consultalab.core.models import AppModel
 
@@ -177,11 +176,11 @@ class ChavePix(AppModel):
         db_column="nome_fantasia",
         blank=True,
     )
-    participante = models.CharField(
-        max_length=255,
+    participante = models.JSONField(
         verbose_name="Participante",
         db_column="participante",
         blank=True,
+        null=True,
     )
     agencia = models.CharField(
         max_length=50,
@@ -263,14 +262,6 @@ class ChavePix(AppModel):
             "banco": self.banco,
         }
 
-    def save(self, *args, **kwargs):
-        if self.participante:
-            api = BacenRequestApi()
-            result = api.get_bank_info(self.participante)
-            if result:
-                self.banco = f"{result.get('codigoCompensacao') or ''} {result.get('nome', 'N/A')}".strip()  # noqa: E501
-        super().save(*args, **kwargs)
-
 
 class EventoVinculo(AppModel):
     chave_pix = models.ForeignKey(
@@ -327,11 +318,11 @@ class EventoVinculo(AppModel):
         db_column="nome_fantasia",
         blank=True,
     )
-    participante = models.CharField(
-        max_length=255,
+    participante = models.JSONField(
         verbose_name="Participante",
         db_column="participante",
         blank=True,
+        null=True,
     )
     agencia = models.CharField(
         max_length=50,
@@ -390,11 +381,3 @@ class EventoVinculo(AppModel):
             "data_abertura_conta": self.data_abertura_conta,
             "banco": self.banco,
         }
-
-    def save(self, *args, **kwargs):
-        if self.participante:
-            api = BacenRequestApi()
-            result = api.get_bank_info(self.participante)
-            if result:
-                self.banco = f"{result.get('codigoCompensacao') or ''} {result.get('nome', 'N/A')}".strip()  # noqa: E501
-        super().save(*args, **kwargs)

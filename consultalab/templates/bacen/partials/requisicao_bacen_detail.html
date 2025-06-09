@@ -69,10 +69,10 @@
                   <td>{{ chave.nome_proprietario }}</td>
                   <td class="fw-light">
                     <span class="fw-bold fst-italic">
-                      {% if chave.banco %}
-                        {{ chave.banco }}
+                      {% if chave.participante %}
+                        {{ chave.participante.codigoCompensacao }} {{ chave.participante.nome }}
                       {% else %}
-                        {{ chave.participante }}
+                        Desconhecido
                       {% endif %}
                     </span>
                     <br />
@@ -111,10 +111,10 @@
                                 <td>{{ evento.nome_proprietario }}</td>
                                 <td class="fw-light">
                                   <span class="fw-bold fst-italic">
-                                    {% if chave.banco %}
-                                      {{ chave.banco }}
+                                    {% if evento.participante %}
+                                      {{ evento.participante.codigoCompensacao }} {{ evento.participante.nome }}
                                     {% else %}
-                                      {{ chave.participante }}
+                                      Desconhecido
                                     {% endif %}
                                   </span>
                                   <br />

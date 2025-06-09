@@ -20,7 +20,10 @@ class BacenRequestApi:
 
         self.pix_endpoint = "/consultar-vinculos-pix"
 
+        self.bank_infos = {}
+
         self.TIMEOUT_REQUEST = 60  # seconds
+        self.STATUS_CODE_SUCCESS = 200
 
     def _execute_pix_request(self, payload: dict) -> dict:
         url = f"{self.base_url}{self.pix_endpoint}"
@@ -39,7 +42,29 @@ class BacenRequestApi:
                 "message": str(e),
             }
 
-        return {"status": "success", "data": response.json()}
+        if response.status_code == self.STATUS_CODE_SUCCESS:
+            data = response.json()
+
+            chaves = [data]
+            if "vinculosPix" in data:
+                chaves = data.get("vinculosPix")
+
+            for chave in chaves:
+                participante_chave = chave.get("participante")
+                if participante_chave is not None:
+                    self._save_bank_info(participante_chave)
+                    chave["participante"] = self.bank_infos[participante_chave]
+
+                for evento in chave.get("eventosVinculo", []):
+                    participante_evento = evento.get("participante")
+                    if participante_evento is not None:
+                        self._save_bank_info(participante_evento)
+                        evento["participante"] = self.bank_infos[participante_evento]
+
+        return {
+            "status": "success",
+            "data": chaves,
+        }
 
     def get_pix_by_cpf_cnpj(self, cpf: str, reason: str) -> dict:
         payload = {"cpfCnpj": cpf, "motivo": reason}
@@ -65,3 +90,12 @@ class BacenRequestApi:
             return {}
 
         return response.json()
+
+    def _save_bank_info(self, participante: str) -> dict:
+        if participante not in self.bank_infos:
+            bank_info = self.get_bank_info(participante)
+            self.bank_infos[participante] = {
+                "cnpj": bank_info.get("cnpj", None),
+                "nome": bank_info.get("nome", None),
+                "codigoCompensacao": bank_info.get("codigoCompensacao", None),
+            }
