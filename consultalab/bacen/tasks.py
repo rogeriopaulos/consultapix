@@ -10,6 +10,10 @@ from consultalab.bacen.models import RequisicaoBacen
 logger = logging.getLogger(__name__)
 
 
+class TaskFailureError(Exception):
+    pass
+
+
 @shared_task(name="request_bacen_pix")
 def request_bacen_pix(requisicao_id: int) -> dict:
     """
@@ -20,31 +24,33 @@ def request_bacen_pix(requisicao_id: int) -> dict:
     reason = requisicao.motivo
 
     if not value and not reason:
-        logger.error("Um valor e um motivo devem ser informados.")
-        return {
-            "status": "error",
-            "message": "Um valor e um motivo devem ser informados.",
-        }
+        msg = "Nenhum valor ou motivo fornecido para a busca de PIX."
+        logger.error(msg)
+        raise TaskFailureError(msg)
 
-    logger.info("Iniciando busca de PIX por CPF/CNPJ: %s", value)
+    logger.info("Iniciando consulta na API do Bacen...")
+    api = BacenRequestApi()
+    if requisicao.tipo_requisicao == "1":
+        search_type = "CPF/CNPJ"
+        response = api.get_pix_by_cpf_cnpj(value, reason)
+    else:
+        search_type = "chave"
+        response = api.get_pix_by_key(value, reason)
 
-    response = BacenRequestApi().get_pix_by_cpf_cnpj(value, reason)
+    logger.info("Concluído busca de PIX por %s: %s", search_type, value)
 
     if response.get("status") != "success":
-        logger.error(response.get("message", "Erro desconhecido"))
-        return {
-            "status": response.get("status", "error"),
-            "message": response.get("message", "Erro desconhecido"),
-        }
+        raise TaskFailureError(response.get("message", "Erro desconhecido"))
 
-    logger.info("Tarefa de busca de PIX por CPF/CNPJ concluída")
+    logger.info('Tarefa de busca de PIX do valor "%s" concluída com sucesso.', value)
 
     chaves = response.get("data", [])
     [create_chave_pix(chave, requisicao) for chave in chaves]
 
     return {
         "status": "success",
-        "message": "Dados de busca de PIX por CPF/CNPJ processados com sucesso",
+        "message": f"Busca de PIX por {search_type} processada com sucesso",
+        "search": value,
     }
 
 

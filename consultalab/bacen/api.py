@@ -18,15 +18,16 @@ class BacenRequestApi:
             "Accept": "application/json",
         }
 
-        self.pix_endpoint = "/consultar-vinculos-pix"
+        self.pix_cpfcnpj_endpoint = "/consultar-vinculos-pix"
+        self.pix_chave_endpoint = "/consultar-vinculo-pix"
 
         self.bank_infos = {}
 
         self.TIMEOUT_REQUEST = 60  # seconds
         self.STATUS_CODE_SUCCESS = 200
 
-    def _execute_pix_request(self, payload: dict) -> dict:
-        url = f"{self.base_url}{self.pix_endpoint}"
+    def _execute_pix_request(self, endpoint: str, payload: dict) -> dict:
+        url = f"{self.base_url}{endpoint}"
         try:
             response = requests.get(
                 url,
@@ -66,13 +67,13 @@ class BacenRequestApi:
             "data": chaves,
         }
 
-    def get_pix_by_cpf_cnpj(self, cpf: str, reason: str) -> dict:
-        payload = {"cpfCnpj": cpf, "motivo": reason}
-        return self._execute_pix_request(payload)
+    def get_pix_by_cpf_cnpj(self, cpf_cnpj: str, reason: str) -> dict:
+        payload = {"cpfCnpj": cpf_cnpj, "motivo": reason}
+        return self._execute_pix_request(self.pix_cpfcnpj_endpoint, payload)
 
     def get_pix_by_key(self, key: str, reason: str) -> dict:
         payload = {"chave": key, "motivo": reason}
-        return self._execute_pix_request(payload)
+        return self._execute_pix_request(self.pix_chave_endpoint, payload)
 
     def get_bank_info(self, cnpj: str) -> dict:
         """
