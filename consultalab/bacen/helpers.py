@@ -1,34 +1,14 @@
-import io
 import logging
+from datetime import datetime
 
-import requests
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.pagesizes import landscape
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.platypus import Paragraph
-from reportlab.platypus import SimpleDocTemplate
-from reportlab.platypus import Spacer
-from reportlab.platypus import Table
-from reportlab.platypus import TableStyle
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
 
-def camelcase_to_snake_case(data: dict) -> dict:
-    """
-    Convert camelCase keys in a dictionary to snake_case.
-    """
-
-    def camel_to_snake(name: str) -> str:
-        return "".join(["_" + i.lower() if i.isupper() else i for i in name]).lstrip(
-            "_",
-        )
-
-    return {camel_to_snake(k): v for k, v in data.items()}
+LIST_PAGE_SIZE = 10  # Default page size for "requisicoes" list views
 
 
 def has_object(classmodel, **kwargs) -> bool:
@@ -40,269 +20,78 @@ def has_object(classmodel, **kwargs) -> bool:
         return True
 
 
-class BacenRequestApi:
-    def __init__(self):
-        self.base_url = settings.BACEN_API_DICT_BASEURL
-        self.informes_url = settings.BACEN_API_INFORMES
+def parse_datetime_br(date_str: str) -> datetime | None:
+    if not date_str:
+        return None
 
-        self.username = settings.BACEN_API_DICT_USER
-        self.password = settings.BACEN_API_DICT_PASSWORD
-
-        self.headers = {
-            "Accept": "application/json",
-        }
-
-        self.pix_endpoint = "/consultar-vinculos-pix"
-
-        self.TIMEOUT_REQUEST = 60  # seconds
-
-    def _execute_pix_request(self, payload: dict) -> dict:
-        url = f"{self.base_url}{self.pix_endpoint}"
+    try:
+        dt = datetime.strptime(date_str, "%d/%m/%Y %H:%M:%S").astimezone()
+    except ValueError:
         try:
-            response = requests.get(
-                url,
-                headers=self.headers,
-                params=payload,
-                auth=(self.username, self.password),
-                timeout=self.TIMEOUT_REQUEST,
-            )
-            response.raise_for_status()
-        except requests.exceptions.RequestException as e:
-            return {"error": str(e)}
+            dt = datetime.fromisoformat(date_str)
+        except ValueError:
+            return None
 
-        return response.json()
+    if settings.USE_TZ and dt.tzinfo is None:
+        dt = timezone.make_aware(dt, timezone.get_default_timezone())
 
-    def get_pix_by_cpf_cnpj(self, cpf: str, reason: str) -> dict:
-        payload = {"cpfCnpj": cpf, "motivo": reason}
-        return self._execute_pix_request(payload)
-
-    def get_pix_by_key(self, key: str, reason: str) -> dict:
-        payload = {"chave": key, "motivo": reason}
-        return self._execute_pix_request(payload)
-
-    def get_bank_info(self, cnpj: str) -> dict:
-        """
-        Obtém informações bancárias de um CNPJ usando a API de Informes do Bacen.
-        """
-        try:
-            response = requests.get(
-                f"{self.informes_url}/pessoasJuridicas",
-                params={"cnpj": cnpj},
-                timeout=self.TIMEOUT_REQUEST,
-            )
-            response.raise_for_status()
-        except requests.exceptions.RequestException:
-            logger.exception("Erro ao obter informações do banco")
-            return {}
-
-        return response.json()
+    return dt
 
 
-class PixReportGenerator:
-    def __init__(self):
-        self.buffer = io.BytesIO()
-        self.pagesize = landscape(A4)
-        self.width, self.height = self.pagesize
-        self.styles = getSampleStyleSheet()
-        self.setup_styles()
-        self.bacen_api = BacenRequestApi()
-        self.banks_info = {}
-
-    def setup_styles(self):
-        """Configura os estilos de texto para o documento"""
-        self.styles.add(
-            ParagraphStyle(
-                name="Header",
-                fontName="Helvetica-Bold",
-                fontSize=12,
-                alignment=1,  # Centralizado
-                spaceAfter=2,
-            ),
+def camelcase_to_snake_case(data: dict) -> dict:
+    def camel_to_snake(name: str) -> str:
+        return "".join(["_" + i.lower() if i.isupper() else i for i in name]).lstrip(
+            "_",
         )
 
-        self.styles.add(
-            ParagraphStyle(
-                name="SubHeader",
-                fontName="Helvetica-Bold",
-                fontSize=10,
-                alignment=1,  # Centralizado
-                spaceAfter=2,
-            ),
-        )
+    return {camel_to_snake(k): v for k, v in data.items()}
 
-        self.styles.add(
-            ParagraphStyle(
-                name="ChaveTitle",
-                fontName="Helvetica-Bold",
-                fontSize=9,
-                alignment=0,  # Esquerda
-                spaceAfter=2,
-            ),
-        )
 
-        self.styles["Normal"].fontName = "Helvetica"
-        self.styles["Normal"].fontSize = 9
+def clean_chave_pix_data(chave: dict) -> dict:
+    chave_pix_data = {
+        "chave": chave.get("chave"),
+        "tipo_chave": chave.get("tipoChave"),
+        "status": chave.get("status"),
+        "data_abertura_reivindicacao": parse_datetime_br(
+            chave.get("dataAberturaReivindicacao"),
+        ),
+        "cpf_cnpj": chave.get("cpfCnpj"),
+        "nome_proprietario": chave.get("nomeProprietario"),
+        "nome_fantasia": chave.get("nomeFantasia"),
+        "participante": chave.get("participante"),
+        "agencia": chave.get("agencia"),
+        "numero_conta": chave.get("numeroConta"),
+        "tipo_conta": chave.get("tipoConta"),
+        "data_abertura_conta": parse_datetime_br(chave.get("dataAberturaConta")),
+        "proprietario_da_chave_desde": parse_datetime_br(
+            chave.get("proprietarioDaChaveDesde"),
+        ),
+        "data_criacao": parse_datetime_br(chave.get("dataCriacao")),
+        "ultima_modificacao": parse_datetime_br(chave.get("ultimaModificacao")),
+    }
+    chave_pix_data = {k: v for k, v in chave_pix_data.items() if v is not None}
+    chave_pix_data["eventos_vinculo"] = []
 
-    def create_header(self, canvas, doc):
-        """Cria o cabeçalho em cada página"""
-        canvas.saveState()
+    for vinculo in chave.get("eventosVinculo", []):
+        if vinculo:
+            evento_data = {
+                "tipo_evento": vinculo.get("tipoEvento", None),
+                "motivo_evento": vinculo.get("motivoEvento", None),
+                "data_evento": parse_datetime_br(vinculo.get("dataEvento", None)),
+                "chave": vinculo.get("chave", None),
+                "tipo_chave": vinculo.get("tipoChave", None),
+                "cpf_cnpj": vinculo.get("cpfCnpj", None),
+                "nome_proprietario": vinculo.get("nomeProprietario", None),
+                "nome_fantasia": vinculo.get("nomeFantasia", None),
+                "participante": vinculo.get("participante", None),
+                "agencia": vinculo.get("agencia", None),
+                "numero_conta": vinculo.get("numeroConta", None),
+                "tipo_conta": vinculo.get("tipoConta", None),
+                "data_abertura_conta": parse_datetime_br(
+                    vinculo.get("dataAberturaConta", None),
+                ),
+            }
+            evento_data = {k: v for k, v in evento_data.items() if v is not None}
+            chave_pix_data["eventos_vinculo"].append(evento_data)
 
-        # Cabeçalho
-        canvas.setFont("Helvetica-Bold", 12)
-        canvas.drawCentredString(
-            self.width / 2,
-            self.height - 20,
-            "POLÍCIA CIVIL DO PIAUÍ",
-        )
-        canvas.drawCentredString(
-            self.width / 2,
-            self.height - 35,
-            "DIRETORIA DE INTELIGÊNCIA DA POLÍCIA CIVIL",
-        )
-        canvas.drawCentredString(
-            self.width / 2,
-            self.height - 50,
-            "LABORATÓRIO DE TECNOLOGIA CONTRA LAVAGEM DE DINHEIRO",
-        )
-        canvas.drawCentredString(
-            self.width / 2,
-            self.height - 65,
-            "RELAÇÃO DE CHAVES PIX - DETALHADA",
-        )
-
-        # Linha horizontal
-        canvas.setStrokeColor(colors.black)
-        canvas.line(30, self.height - 75, self.width - 30, self.height - 75)
-
-        # Rodapé
-        canvas.setFont("Helvetica", 8)
-        canvas.drawCentredString(self.width / 2, 15, "CONFIDENCIAL")
-        canvas.drawRightString(self.width - 30, 15, f"{doc.page}/XX")
-
-        canvas.restoreState()
-
-    def generate_report(self, requisicao_data, chaves_pix):
-        """Gera o relatório completo"""
-        left_margin = 30
-        right_margin = 30
-        doc = SimpleDocTemplate(
-            self.buffer,
-            pagesize=self.pagesize,
-            leftMargin=left_margin,
-            rightMargin=right_margin,
-            topMargin=80,
-            bottomMargin=30,
-        )
-
-        story = []
-
-        busca = (
-            f"{requisicao_data['tipo_requisicao']}: {requisicao_data['termo_busca']}"
-        )
-        story.append(Paragraph(busca, self.styles["ChaveTitle"]))
-        story.append(Spacer(1, 5))
-
-        # Largura total disponível para a tabela
-        total_width = self.width - left_margin - right_margin
-        # Proporção das colunas (soma deve ser 1.0)
-        col_proportions = [0.10, 0.10, 0.18, 0.13, 0.18, 0.23, 0.08]
-        col_widths = [total_width * p for p in col_proportions]
-
-        for chave in chaves_pix:
-            # Título da chave
-            chave_title = f"Chave: {chave['chave']} - {chave['status']}"
-            story.append(Paragraph(chave_title, self.styles["ChaveTitle"]))
-            story.append(Spacer(1, 5))
-
-            # Tabela de eventos
-            data = [
-                [
-                    Paragraph("Data", self.styles["Normal"]),
-                    Paragraph("Evento", self.styles["Normal"]),
-                    Paragraph("Motivo", self.styles["Normal"]),
-                    Paragraph("CPF/CNPJ", self.styles["Normal"]),
-                    Paragraph("Nome", self.styles["Normal"]),
-                    Paragraph("Banco", self.styles["Normal"]),
-                    Paragraph("Abertura Conta", self.styles["Normal"]),
-                ],
-            ]
-
-            for evento in chave["eventos_vinculo"]:
-                banco = "Dados bancários não disponíveis"
-                if evento.get("banco"):
-                    banco = self.format_bank_cell(evento)
-
-                data_evento = "N/A"
-                if evento.get("data_evento"):
-                    data_evento = evento.get("data_evento").strftime(
-                        "%d/%m/%Y %H:%M:%S",
-                    )
-
-                data_abertura_conta = "N/A"
-                if evento.get("data_abertura_conta"):
-                    data_abertura_conta = evento.get("data_abertura_conta").strftime(
-                        "%d/%m/%Y",
-                    )
-
-                row = [
-                    Paragraph(data_evento, self.styles["Normal"]),
-                    Paragraph(
-                        str(evento.get("tipo_evento", "")),
-                        self.styles["Normal"],
-                    ),
-                    Paragraph(
-                        str(evento.get("motivo_evento", "")),
-                        self.styles["Normal"],
-                    ),
-                    Paragraph(str(evento.get("cpf_cnpj", "")), self.styles["Normal"]),
-                    Paragraph(
-                        str(evento.get("nome_proprietario", "")),
-                        self.styles["Normal"],
-                    ),
-                    Paragraph(banco, self.styles["Normal"]),
-                    Paragraph(data_abertura_conta, self.styles["Normal"]),
-                ]
-                data.append(row)
-
-            # Criar tabela
-            table = Table(data, colWidths=col_widths)
-
-            # Estilo da tabela
-            table_style = TableStyle(
-                [
-                    ("BACKGROUND", (0, 0), (-1, 0), colors.lightgrey),
-                    ("TEXTCOLOR", (0, 0), (-1, 0), colors.black),
-                    ("ALIGN", (0, 0), (-1, 0), "CENTER"),
-                    ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
-                    ("FONTSIZE", (0, 0), (-1, 0), 8),
-                    ("BOTTOMPADDING", (0, 0), (-1, 0), 5),
-                    ("BACKGROUND", (0, 1), (-1, -1), colors.white),
-                    ("FONTNAME", (0, 1), (-1, -1), "Helvetica"),
-                    ("FONTSIZE", (0, 1), (-1, -1), 8),
-                    ("ALIGN", (0, 0), (-1, -1), "LEFT"),
-                    ("VALIGN", (0, 0), (-1, -1), "TOP"),
-                    ("GRID", (0, 0), (-1, -1), 0.5, colors.black),
-                    ("WORDWRAP", (0, 0), (-1, -1), "CJK"),
-                ],
-            )
-
-            table.setStyle(table_style)
-            story.append(table)
-            story.append(Spacer(1, 10))
-
-        # Construir o documento
-        doc.build(
-            story,
-            onFirstPage=self.create_header,
-            onLaterPages=self.create_header,
-        )
-        self.buffer.seek(0)
-        return self.buffer
-
-    def format_bank_cell(self, event: dict) -> str:
-        banco = event.get("banco", "N/A")
-        agencia = event.get("agencia", "N/A")
-        conta = event.get("numero_conta", "N/A")
-        tipo_conta = event.get("tipo_conta", "N/A")
-
-        return f"{banco}\nAgência: {agencia}\nConta: {conta}\nTipo: {tipo_conta}"
+    return chave_pix_data

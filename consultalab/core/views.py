@@ -6,12 +6,13 @@ from django.views.generic import TemplateView
 
 from consultalab.bacen.filters import RequisicaoBacenFilter
 from consultalab.bacen.forms import RequisicaoBacenFilterFormHelper
+from consultalab.bacen.helpers import LIST_PAGE_SIZE
 from consultalab.bacen.models import RequisicaoBacen
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = "pages/home.html"
-    page_size = 10
+    page_size = LIST_PAGE_SIZE
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
