@@ -42,7 +42,7 @@ class RequisicaoBacenForm(forms.ModelForm):
         tipo_requisicao = cleaned_data.get("tipo_requisicao")
 
         if tipo_requisicao == "1" and not termo_busca.isdigit():
-            message = "O termo de busca deve ser um CPF válido."
+            message = "O termo de busca deve ser um CPF/CNPJ válido."
             raise forms.ValidationError(message)
 
         return cleaned_data

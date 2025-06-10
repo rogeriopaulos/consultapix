@@ -8,6 +8,9 @@ from django.utils import timezone
 logger = logging.getLogger(__name__)
 
 
+LIST_PAGE_SIZE = 10  # Default page size for "requisicoes" list views
+
+
 def has_object(classmodel, **kwargs) -> bool:
     try:
         classmodel.objects.get(**kwargs)

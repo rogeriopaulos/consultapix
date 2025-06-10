@@ -1,6 +1,9 @@
 import logging
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import EmptyPage
+from django.core.paginator import PageNotAnInteger
+from django.core.paginator import Paginator
 from django.http import FileResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -8,7 +11,10 @@ from django.views.generic import CreateView
 from django.views.generic import DetailView
 from django.views.generic import View
 
+from consultalab.bacen.filters import RequisicaoBacenFilter
+from consultalab.bacen.forms import RequisicaoBacenFilterFormHelper
 from consultalab.bacen.forms import RequisicaoBacenForm
+from consultalab.bacen.helpers import LIST_PAGE_SIZE
 from consultalab.bacen.models import RequisicaoBacen
 from consultalab.bacen.report import PixReportGenerator
 from consultalab.bacen.tasks import request_bacen_pix
@@ -42,6 +48,7 @@ class RequisicaoBacenCreateView(LoginRequiredMixin, CreateView):
     template_name = "pages/home.html"
     success_url = reverse_lazy("core:home")
     success_message = "Requisição Bacen criada com sucesso!"
+    page_size = LIST_PAGE_SIZE
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -52,7 +59,26 @@ class RequisicaoBacenCreateView(LoginRequiredMixin, CreateView):
         requisicoes = RequisicaoBacen.objects.filter(user=self.request.user).order_by(
             "-created",
         )
-        response.context_data["requisicoes"] = requisicoes
+        requisicao_filter = RequisicaoBacenFilter(
+            self.request.GET,
+            queryset=requisicoes,
+        )
+
+        requisicao_filter.form.helper = RequisicaoBacenFilterFormHelper()
+        requisicao_filter_form = requisicao_filter.form
+        requisicao_filter_qs = requisicao_filter.qs
+
+        paginator = Paginator(requisicao_filter_qs, self.page_size)
+        page_number = self.request.GET.get("page")
+        try:
+            requisicao_object = paginator.page(page_number)
+        except PageNotAnInteger:
+            requisicao_object = paginator.page(1)
+        except EmptyPage:
+            requisicao_object = paginator.page(paginator.num_pages)
+
+        response.context_data["requisicoes"] = requisicao_object
+        response.context_data["requisicoes_filter_form"] = requisicao_filter_form
         response.context_data["messages_toast"] = form.errors["__all__"]
         return response
 
