@@ -27,7 +27,7 @@
               {{ requisicao.termo_busca }}
             </div>
           </div>
-          <div class="row text-muted">{{ requisicao.motivo }}</div>
+          <div class="row text-muted">Motivo: {{ requisicao.motivo }}</div>
           {% with status=requisicao.get_status %}
             <div class="row badge {{ status.class|default:"text-bg-secondary" }}">
               <div class="col">
@@ -39,6 +39,9 @@
         <div class="col d-flex flex-column align-items-end">
           <span><i class="bi bi-calendar2 me-1"></i> {{ requisicao.created }}</span>
           <span class="fw-light"><i class="bi bi-person-circle me-1"></i> {{ requisicao.user.name }}</span>
+          <span class="fw-medium">
+            <i class="bi bi-key-fill"></i> Total de chaves: {{ requisicao.chaves_pix.count }}
+          </span>
         </div>
       </div>
       <div class="row">
