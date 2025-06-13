@@ -19,6 +19,11 @@ urlpatterns = [
         views.RequisicaoBacenDeleteView.as_view(),
         name="requisicao_bacen_remover",
     ),
+    path(
+        "requisicao/<int:requisicao_id>/adicionar-alias/",
+        views.UpdateAliasView.as_view(),
+        name="requisicao_bacen_alias",
+    ),
 ]
 htmx_urlpatterns = [
     path("cpf_cnpj/", views.CPFCNPJFormView.as_view(), name="cpf_cnpj"),
@@ -32,6 +37,16 @@ htmx_urlpatterns = [
         "requisicao/<int:requisicao_id>/status/",
         views.RequisicaoBacenStatusView.as_view(),
         name="requisicao_status",
+    ),
+    path(
+        "requisicao/<int:pk>/alias/",
+        views.AliasFormView.as_view(),
+        name="requisicao_bacen_alias_form",
+    ),
+    path(
+        "requisicao/<int:requisicao_id>/row/",
+        views.RequisicaoBacenRowView.as_view(),
+        name="requisicao_bacen_row",
     ),
     path(
         "requisicao/<int:pk>/",

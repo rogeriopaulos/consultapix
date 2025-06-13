@@ -48,6 +48,12 @@ class RequisicaoBacen(AppModel):
         db_column="task_id",
         blank=True,
     )
+    alias = models.CharField(
+        max_length=255,
+        verbose_name="Alias",
+        db_column="alias",
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Requisição Bacen"

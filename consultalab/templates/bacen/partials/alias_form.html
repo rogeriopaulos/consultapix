@@ -1,0 +1,19 @@
+<form hx-post="{% url 'bacen:requisicao_bacen_alias' requisicao_id %}"
+      hx-target="this"
+      hx-swap="outerHTML"
+      hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+  <div>
+    <input type="text" name="alias" value="" />
+  </div>
+  <button class="btn">
+    <i class="bi bi-floppy" data-bs-toggle="tooltip" data-bs-title="Salvar"></i>
+  </button>
+  <button class="btn">
+    <i class="bi bi-x-lg"
+       data-bs-toggle="tooltip"
+       data-bs-title="Cancelar"
+       hx-get="{% url 'bacen:requisicao_bacen_row' requisicao_id %}"
+       hx-target="#requisicao-{{ requisicao_id }}"
+       hx-swap="innerHTML"></i>
+  </button>
+</form>

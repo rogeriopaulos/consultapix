@@ -32,5 +32,7 @@ class RequisicaoBacenFilter(django_filters.FilterSet):
 
     def filter_busca(self, queryset, name, value):
         return queryset.filter(
-            Q(termo_busca__icontains=value) | Q(motivo__icontains=value),
+            Q(termo_busca__icontains=value)
+            | Q(motivo__icontains=value)
+            | Q(alias__icontains=value),
         )

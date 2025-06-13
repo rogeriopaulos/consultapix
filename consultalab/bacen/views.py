@@ -175,3 +175,38 @@ class RequisicaoBacenDeleteView(LoginRequiredMixin, View):
             )
             response.status_code = 400
         return response
+
+
+class AliasFormView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        return render(
+            request,
+            "bacen/partials/alias_form.html",
+            {"requisicao_id": kwargs.get("pk")},
+        )
+
+
+class RequisicaoBacenRowView(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        requisicao = RequisicaoBacen.objects.get(id=kwargs.get("requisicao_id"))
+        return render(
+            request,
+            "bacen/partials/requisicao_row.html",
+            {"requisicao": requisicao},
+        )
+
+
+class UpdateAliasView(LoginRequiredMixin, View):
+    def post(self, request, *args, **kwargs):
+        requisicao = RequisicaoBacen.objects.get(id=kwargs.get("requisicao_id"))
+        alias = request.POST.get("alias")
+        if not alias:
+            return render(
+                request,
+                "bacen/partials/alias_error.html",
+                {"error": "Alias não pode ser vazio."},
+            )
+        requisicao.alias = alias
+        requisicao.save()
+
+        return render(request, "bacen/partials/alias_success.html", {"alias": alias})
