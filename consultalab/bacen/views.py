@@ -163,16 +163,16 @@ class RequisicaoBacenDeleteView(LoginRequiredMixin, View):
                 requisicao.delete()
                 response.status_code = 200
                 return response
+            msg = "Usuário não autorizado a excluir esta requisição Bacen."
+            logger.error(msg)
+            has_error = True
         except RequisicaoBacen.DoesNotExist:
-            logger.exception(
-                "Requisição Bacen não encontrada ou não pertence ao usuário.",
-            )
+            msg = "Requisição Bacen não encontrada ou não pertence ao usuário."
+            logger.exception(msg)
             has_error = True
 
         if has_error:
-            response["HX-Trigger"] = (
-                '{"showMessage": "Ocorreu um erro ao tentar excluir a requisição."}'
-            )
+            response["HX-Trigger"] = f'{{"showMessage": "{msg}"}}'
             response.status_code = 400
         return response
 
