@@ -177,12 +177,16 @@ class RequisicaoBacenDeleteView(LoginRequiredMixin, View):
         return response
 
 
-class AliasFormView(LoginRequiredMixin, View):
+class ReferenciaFormView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
+        requisicao = RequisicaoBacen.objects.get(id=kwargs.get("pk"))
         return render(
             request,
-            "bacen/partials/alias_form.html",
-            {"requisicao_id": kwargs.get("pk")},
+            "bacen/partials/referencia_form.html",
+            {
+                "requisicao_id": kwargs.get("pk"),
+                "referencia": requisicao.referencia,
+            },
         )
 
 
@@ -196,17 +200,39 @@ class RequisicaoBacenRowView(LoginRequiredMixin, View):
         )
 
 
-class UpdateAliasView(LoginRequiredMixin, View):
+class UpdateReferenciaView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         requisicao = RequisicaoBacen.objects.get(id=kwargs.get("requisicao_id"))
-        alias = request.POST.get("alias")
-        if not alias:
+        referencia = request.POST.get("referencia")
+        delete_param = request.GET.get("delete", "false")
+
+        if delete_param == "true":
+            requisicao.referencia = ""
+            requisicao.save()
             return render(
                 request,
-                "bacen/partials/alias_error.html",
-                {"error": "Alias não pode ser vazio."},
+                "bacen/partials/requisicao_row.html",
+                {"requisicao": requisicao},
             )
-        requisicao.alias = alias
+
+        if not referencia:
+            response = render(
+                request,
+                "bacen/partials/requisicao_row.html",
+                {"requisicao": requisicao},
+            )
+            response["HX-Trigger"] = '{"showMessage": "Referência não pode ser vazia."}'
+            response.status_code = 400
+            return response
+
+        requisicao.referencia = referencia
         requisicao.save()
 
-        return render(request, "bacen/partials/alias_success.html", {"alias": alias})
+        return render(
+            request,
+            "bacen/partials/referencia_success.html",
+            {
+                "referencia": referencia,
+                "requisicao_id": requisicao.id,
+            },
+        )

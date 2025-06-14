@@ -9,13 +9,20 @@ from consultalab.bacen.models import RequisicaoBacen
 class RequisicaoBacenAdmin(admin.ModelAdmin):
     list_display = (
         "termo_busca",
+        "referencia",
         "tipo_requisicao",
         "motivo",
-        "user",
-        "processada",
         "created",
+        "processada",
+        "user",
     )
-    search_fields = ("user__username", "tipo_requisicao", "termo_busca", "motivo")
+    search_fields = (
+        "user__username",
+        "tipo_requisicao",
+        "termo_busca",
+        "motivo",
+        "referencia",
+    )
     list_filter = ("tipo_requisicao", "processada")
     ordering = ("-created",)
     date_hierarchy = "created"

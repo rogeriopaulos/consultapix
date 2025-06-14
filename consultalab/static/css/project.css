@@ -87,6 +87,10 @@ tr.htmx-swapping td {
     transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.bi-person-fill-add, .bi-trash {
+  font-size: 1.1rem;
+}
+
 @media (max-width: 1200px) {
   button#filter-button {
     font-size: 9px;

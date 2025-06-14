@@ -6,16 +6,16 @@
   {% endif %}
 </td>
 <td>
-  {% if requisicao.alias %}
-    <span class="text-secondary">{{ requisicao.alias }}</span>
+  {% if requisicao.referencia %}
+    <span class="text-secondary">{{ requisicao.referencia }}</span>
   {% else %}
     <div hx-target="this" hx-swap="outerHTML">
       <a href="#"
-         hx-get="{% url 'bacen:requisicao_bacen_alias_form' requisicao.id %}"
-         class="text-decoration-none text-secondary"
+         hx-get="{% url 'bacen:requisicao_bacen_referencia_form' requisicao.id %}"
+         class="text-decoration-none text-secondary d-flex align-items-center"
          data-bs-toggle="tooltip"
-         data-bs-title="Adicionar alias">
-        <i class="bi bi-person-fill-add"></i>
+         data-bs-title="Adicionar referencia">
+        <i class="bi bi-person-fill-add me-1"></i> <small>Adicionar</small>
       </a>
     </div>
   {% endif %}

@@ -20,9 +20,9 @@ urlpatterns = [
         name="requisicao_bacen_remover",
     ),
     path(
-        "requisicao/<int:requisicao_id>/adicionar-alias/",
-        views.UpdateAliasView.as_view(),
-        name="requisicao_bacen_alias",
+        "requisicao/<int:requisicao_id>/adicionar-referencia/",
+        views.UpdateReferenciaView.as_view(),
+        name="requisicao_bacen_referencia",
     ),
 ]
 htmx_urlpatterns = [
@@ -39,9 +39,9 @@ htmx_urlpatterns = [
         name="requisicao_status",
     ),
     path(
-        "requisicao/<int:pk>/alias/",
-        views.AliasFormView.as_view(),
-        name="requisicao_bacen_alias_form",
+        "requisicao/<int:pk>/referencia/",
+        views.ReferenciaFormView.as_view(),
+        name="requisicao_bacen_referencia_form",
     ),
     path(
         "requisicao/<int:requisicao_id>/row/",

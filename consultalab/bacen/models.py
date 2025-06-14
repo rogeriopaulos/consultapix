@@ -48,10 +48,10 @@ class RequisicaoBacen(AppModel):
         db_column="task_id",
         blank=True,
     )
-    alias = models.CharField(
+    referencia = models.CharField(
         max_length=255,
-        verbose_name="Alias",
-        db_column="alias",
+        verbose_name="Referência",
+        db_column="referencia",
         blank=True,
     )
 
