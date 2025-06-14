@@ -1,5 +1,6 @@
 /* These styles are generated from project.scss. */
 
+/* Base Styles */
 body {
   font-family: "Geist", sans-serif;
   font-optical-sizing: auto;
@@ -8,6 +9,7 @@ body {
   background-color: #f0f0f0;
 }
 
+/* Alert Components */
 .alert-debug {
   color: black;
   background-color: white;
@@ -20,15 +22,12 @@ body {
   border-color: #eed3d7;
 }
 
+/* Layout and Components */
 .cp-img-cards {
   width: 50%;
   height: auto;
   margin: 0 auto;
   display: block;
-}
-
-select[type="hidden" i] {
-  display: none !important;
 }
 
 #modals-consulta {
@@ -43,6 +42,11 @@ select[type="hidden" i] {
 #info-text {
   font-size: 14px;
   color: #333;
+}
+
+/* Forms and Controls */
+select[type="hidden" i] {
+  display: none !important;
 }
 
 #div_id_created {
@@ -79,18 +83,20 @@ input#id_created_1 {
   margin-left: 4px;
 }
 
-tr.htmx-swapping td {
-  opacity: 0;
-  transform: translateY(20px) scale(0.98);
-  transition:
-    opacity 0.5s ease-out,
-    transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.bi-person-fill-add, .bi-trash {
+/* Icons */
+.bi-person-fill-add,
+.bi-trash {
   font-size: 1.1rem;
 }
 
+/* Animations */
+tr.htmx-swapping td {
+  opacity: 0;
+  transform: translateY(20px) scale(0.98);
+  transition: opacity 0.5s ease-out, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Media Queries */
 @media (max-width: 1200px) {
   button#filter-button {
     font-size: 9px;
