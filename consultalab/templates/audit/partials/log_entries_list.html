@@ -1,0 +1,20 @@
+<table class="table table-striped cl-table">
+  <thead>
+    <tr>
+      <th>Data/Hora</th>
+      <th>Módulo/Ato</th>
+      <th>Objeto criado/alterado</th>
+      <th>Usuário</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for log in log_entries %}
+      <tr>
+        <td>{{ log.timestamp }}</td>
+        <td>{{ log.content_type.app_label }}</td>
+        <td>{{ log.object_repr }}</td>
+        <td>{{ log.actor|default:"-----" }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

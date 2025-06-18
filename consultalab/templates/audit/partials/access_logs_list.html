@@ -1,0 +1,22 @@
+<table class="table table-striped cl-table">
+  <thead>
+    <tr>
+      <th>Acesso</th>
+      <th>Logout</th>
+      <th>IP</th>
+      <th>Usuário</th>
+      <th>User Agent</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for log in access_logs %}
+      <tr>
+        <td>{{ log.attempt_time }}</td>
+        <td>{{ log.logout_time|default:"----" }}</td>
+        <td>{{ log.ip_address }}</td>
+        <td>{{ log.username }}</td>
+        <td>{{ log.user_agent }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>

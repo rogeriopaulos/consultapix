@@ -36,3 +36,34 @@ class User(AbstractUser):
 
         """
         return reverse("users:detail", kwargs={"pk": self.id})
+
+    class Meta(AbstractUser.Meta):
+        permissions = (
+            (
+                "access_admin_section",
+                "Pode acessar a seção de Administração & Auditoria",
+            ),
+            ("can_request_pix", "Pode realizar consultas de PIX"),
+            ("can_request_ccs", "Pode realizar consultas de CCS"),
+        )
+
+    def get_user_permissions(self):
+        perm_map = {
+            "users.access_admin_section": {
+                "text": "admin",
+                "badge_class": "primary",
+            },
+            "users.can_request_pix": {
+                "text": "pix",
+                "badge_class": "success",
+            },
+            "users.can_request_ccs": {
+                "text": "ccs",
+                "badge_class": "info",
+            },
+        }
+        return [
+            {"text": label["text"], "badge_class": label["badge_class"]}
+            for perm, label in perm_map.items()
+            if self.has_perm(perm)
+        ]

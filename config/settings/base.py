@@ -81,13 +81,15 @@ THIRD_PARTY_APPS = [
     "django_celery_beat",
     "django_celery_results",
     "django_filters",
+    "axes",
+    "auditlog",
 ]
 
 LOCAL_APPS = [
     "consultalab.users",
-    # Your stuff: custom apps go here
     "consultalab.core",
     "consultalab.bacen",
+    "consultalab.audit",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -101,6 +103,8 @@ MIGRATION_MODULES = {"sites": "consultalab.contrib.sites.migrations"}
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
 AUTHENTICATION_BACKENDS = [
+    # https://django-axes.readthedocs.io/en/latest/2_installation.html
+    "axes.backends.AxesStandaloneBackend",
     "django.contrib.auth.backends.ModelBackend",
     "allauth.account.auth_backends.AuthenticationBackend",
 ]
@@ -145,6 +149,10 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "allauth.account.middleware.AccountMiddleware",
+    # https://django-auditlog.readthedocs.io/en/latest/usage.html#middleware
+    "auditlog.middleware.AuditlogMiddleware",
+    # https://django-axes.readthedocs.io/en/latest/2_installation.html
+    "axes.middleware.AxesMiddleware",
 ]
 
 # STATIC
@@ -339,3 +347,10 @@ BACEN_API_INFORMES = env(
     "BACEN_API_INFORMES",
     default="https://www3.bcb.gov.br/informes/rest",
 )
+
+# django-axes
+# ------------------------------------------------------------------------------
+# https://django-axes.readthedocs.io/en/latest/4_configuration.html#configuring-project-settings
+AXES_LOCK_OUT_AT_FAILURE = False
+# https://django-axes.readthedocs.io/en/latest/2_installation.html#disabling-axes-system-checks
+SILENCED_SYSTEM_CHECKS = ["axes.W003"]

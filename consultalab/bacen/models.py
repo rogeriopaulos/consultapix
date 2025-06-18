@@ -1,3 +1,5 @@
+from auditlog.models import AuditlogHistoryField
+from auditlog.registry import auditlog
 from django.contrib.auth import get_user_model
 from django.db import models
 from django_celery_results.models import TaskResult
@@ -54,6 +56,8 @@ class RequisicaoBacen(AppModel):
         db_column="referencia",
         blank=True,
     )
+
+    history = AuditlogHistoryField()
 
     class Meta:
         verbose_name = "Requisição Bacen"
@@ -387,3 +391,8 @@ class EventoVinculo(AppModel):
             "data_abertura_conta": self.data_abertura_conta,
             "banco": self.banco,
         }
+
+
+# Auditlog registries
+# ------------------------------------------------------------------------------
+auditlog.register(RequisicaoBacen)

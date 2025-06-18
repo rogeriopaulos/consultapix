@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+  Administração
+{% endblock title %}
+{% block css %}
+  {{ block.super }}
+  <link href="{% static 'css/admin_section.css' %}" rel="stylesheet" />
+{% endblock css %}
+{% block content %}
+  <div class="row border border-2 rounded p-3 shadow bg-light mb-4 mt-3">
+    <div class="col">
+      <h5 class="mb-4 d-flex align-items-center justify-content-between">
+        <span class="fw-bold">
+          <i class="bi bi-gear me-2"></i>
+          Administração
+        </span>
+      </h5>
+      <div class="tab-list">
+        <nav class="nav nav-pills flex-column flex-sm-row" role="tablist">
+          <a hx-get="{% url 'audit:users' %}"
+             hx-target="#tab-content"
+             hx-trigger="click"
+             class="flex-sm-fill text-sm-center nav-link active cl-nav-link"
+             data-bs-toggle="pill"
+             aria-current="page"
+             href="#">Usuários</a>
+          <a hx-get="{% url 'audit:log_entries' %}"
+             hx-target="#tab-content"
+             hx-trigger="click"
+             class="flex-sm-fill text-sm-center nav-link cl-nav-link"
+             data-bs-toggle="pill"
+             href="#">Auditoria</a>
+          <a hx-get="{% url 'audit:access_logs' %}"
+             hx-target="#tab-content"
+             hx-trigger="click"
+             class="flex-sm-fill text-sm-center nav-link cl-nav-link"
+             data-bs-toggle="pill"
+             href="#">Acessos</a>
+        </nav>
+      </div>
+      <div id="tabs"
+           hx-get="{% url 'audit:users' %}"
+           hx-trigger="load delay:100ms"
+           hx-target="#tab-content"
+           hx-swap="innerHTML"></div>
+      <div id="tab-content" role="tabpanel" class="tab-content p-4"></div>
+    </div>
+  </div>
+{% endblock content %}

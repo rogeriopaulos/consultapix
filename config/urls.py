@@ -15,6 +15,7 @@ urlpatterns = [
     path("contas/", include("allauth.urls")),
     # Your stuff: custom urls includes go here
     path("bacen/", include("consultalab.bacen.urls", namespace="bacen")),
+    path("consultalab-admin/", include("consultalab.audit.urls", namespace="audit")),
     # Media files
     *static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT),
 ]
